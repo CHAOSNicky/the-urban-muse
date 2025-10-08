@@ -1,0 +1,71 @@
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes marquee1 {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes zoomOut {
+  0% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-zoomOut {
+  animation: zoomOut 1s ease-out forwards;
+}
+
+
+.scrolling-text {
+  display: flex;
+  width: max-content;
+}
+
+.animate-marquee {
+  display: flex;
+  animation: marquee 70s linear infinite;
+}
+
+.animate-marquee1 {
+  display: flex;
+  animation: marquee1 60s linear infinite;
+}
+
+/* 
+.hamburger-logo{
+  font-size: 2rem;
+}
+
+.brand-logo{
+  font-size: 2rem;
+}
+
+.search-logo{
+  font-size: 2rem;
+}
+
+.cart-logo{
+  font-size: 2rem;
+} */
+
+.dashboard-container{
+  padding-left: 40px;
+  padding-right: 40px;
+}
