@@ -1,12 +1,11 @@
 import React from 'react';
-import { ShoppingCartIcon } from '@heroicons/react/24/outline';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { ShoppingCartIcon, MagnifyingGlassIcon, UserIcon } from '@heroicons/react/24/outline';
 import promoImage from '../assets/IMG_7315.JPG';
+import { Link } from 'react-router-dom';
 
 function MainImage() {
 
 
-  
   return (
     <div>
       <div className="relative overflow-hidden z-10" style={{ maxHeight: '750px' }}>
@@ -22,10 +21,13 @@ function MainImage() {
             <div className="hamburger-logo pl-2 text-3xl cursor-pointer">☰</div>
 
             {/* Center: Brand Logo */}
-            <div className="brand-logo absolute left-1/2 transform -translate-x-1/2 font-luxury text-5xl cursor-pointer">URBAN MUSE</div>
+            <div className="brand-logo absolute left-1/2 transform -translate-x-1/2 text-rose-500 font-luxury text-5xl cursor-pointer">THE URBAN MUSE</div>
 
             {/* Right: Search + Cart */}
             <div className="flex items-center gap-10 pr-2 text-3xl">
+                 <Link to="/Login" aria-label="Go To Login">
+                        <UserIcon className="h-8 w-8 text-black"/>
+                 </Link>
                  <div className="search-logo cursor-pointer"><MagnifyingGlassIcon className="h-8 w-8 text-black" /></div>
                  <div className="cart-logo cursor-pointer"><ShoppingCartIcon className="h-8 w-8 text-black" /></div>
             </div>
@@ -44,34 +46,4 @@ function MainImage() {
 }
 
 export default MainImage;
-
-
-
-
-//  import promoImage from '../assets/IMG_7315.JPG';
- 
- 
-//  function MainImage(){
-
-//     return(
-//         <div>
-//                {/* 🖼️ Image Container (constrained zoom-out) */}
-//              <div className="relative overflow-hidden z-10" style={{ maxHeight: '750px' }}>
-//                 <div>
-
-//                 </div>
-
-//                 <img
-//                     src={promoImage}
-//                     alt="Promotional Banner"
-//                     className="w-full object-cover transition-transform duration-[1000ms] ease-out animate-zoomOut"
-//                 />
-//             </div> 
-//         </div>   
-//     )
-// }   
- 
-
-// export default MainImage;
- 
 

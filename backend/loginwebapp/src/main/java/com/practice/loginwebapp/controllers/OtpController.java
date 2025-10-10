@@ -1,12 +1,9 @@
 package com.practice.loginwebapp.controllers;
 
+import com.practice.loginwebapp.dtos.Otp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.practice.loginwebapp.services.OtpService;
 
@@ -18,9 +15,12 @@ public class OtpController {
     @Autowired
     OtpService otpservice;
  
-    @GetMapping("/generate")
-    public ResponseEntity<String> generateOtp(@RequestParam String username){
-        return ResponseEntity.ok(otpservice.genrateOtp(username));
+    @PostMapping("/generate")
+    public ResponseEntity<String> generateOtp(@RequestBody Otp otp){
+        System.out.println("Generating OTP for "+ otp.getFullName());
+        String subject = "THE URBAN MUSE | Authentication";
+        String body = "Hello "+ otp.getFullName() + "\n" +"Welcome to THE URBAN MUSE\n" + "Your Authentication Code is : ";
+        return ResponseEntity.ok(otpservice.sendMail(otp.getEmail(), subject, body));
     }
     
 }
