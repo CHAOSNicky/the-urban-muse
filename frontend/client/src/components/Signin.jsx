@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-
+import { useNavigate } from 'react-router-dom';
+ 
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -8,6 +9,7 @@ export default function Signin() {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0); // seconds
   const liveRef = useRef(null);
+  const navigate = useNavigate();
 
   const normalizeEmail = (val) => val.trim();
   const isValidEmail = (val) => /\S+@\S+\.\S+/.test(val);
@@ -42,10 +44,30 @@ export default function Signin() {
 
     try {
       setSubmitLoading(true);
-      // TODO: swap with your actual login endpoint
-      // const res = await fetch("/api/login", { ... })
-      await new Promise((r) => setTimeout(r, 900)); // demo delay
+      
+      const res = await fetch("http://localhost:8080/api/login",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {"Content-Type" : "application/json"},
+          body: JSON.stringify({"email": emailNorm,
+                                "authCode": otp})
+        }
+      );
+
+      if(!res.ok){
+        const data = await res.text();
+        console.log(data);
+        announce("⚠️ Login failed. Try again.");
+        return;
+      }      
+
+      const data = await res.text();
+      console.log(data)
       announce("✅ Logged in successfully.");
+      setTimeout(()=>{
+        navigate("/")
+      },2000);
     } catch (err) {
       console.error(err);
       announce("⚠️ Login failed. Try again.");
@@ -66,8 +88,8 @@ export default function Signin() {
       const res = await fetch("http://localhost:8080/api/otp/generate", {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "text/plain" },
-        body: emailNorm,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({"email" : emailNorm})
       });
 
       if (!res.ok) {
@@ -96,13 +118,13 @@ export default function Signin() {
         </label>
         <div className="relative">
           {/* icon */}
-          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
             <svg
               aria-hidden="true"
               width="18"
               height="18"
               viewBox="0 0 24 24"
-              className="opacity-60"
+              className="opacity-70"
             >
               <path
                 d="M4 6h16a1 1 0 0 1 .8 1.6l-8 10a1 1 0 0 1-1.6 0l-8-10A1 1 0 0 1 4 6Zm0 0l8 5 8-5"
@@ -120,7 +142,7 @@ export default function Signin() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 bg-white/70 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition shadow-sm"
+            className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-300 bg-white/90 text-gray-800 placeholder-gray-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 focus:border-gray-500 transition shadow-sm"
             placeholder="you@example.com"
           />
         </div>
@@ -154,7 +176,7 @@ export default function Signin() {
                 setOtp(v);
               }
             }}
-            className="flex-1 tracking-widest tabular-nums px-3 py-2 rounded-xl border border-gray-200 bg-white/70 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition shadow-sm text-center font-semibold"
+            className="flex-1 tracking-widest tabular-nums px-3 py-2 rounded-xl border border-gray-300 bg-white/90 text-gray-800 placeholder-gray-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 focus:border-gray-500 transition shadow-sm text-center font-semibold"
             placeholder="••••••"
             aria-describedby="otp-help"
           />
@@ -164,8 +186,8 @@ export default function Signin() {
             disabled={otpLoading || cooldown > 0}
             className={`px-4 py-2 rounded-xl font-semibold text-white shadow-sm transition
               ${otpLoading || cooldown > 0
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-neutral-700 to-neutral-800 hover:from-neutral-800 hover:to-neutral-900"
               }`}
           >
             {otpLoading ? (
@@ -180,7 +202,7 @@ export default function Signin() {
             )}
           </button>
         </div>
-        <p id="otp-help" className="mt-1 text-xs text-gray-500">
+        <p id="otp-help" className="mt-1 text-xs text-gray-600">
           Check your inbox (and spam folder). OTP expires quickly.
         </p>
       </div>
@@ -191,8 +213,8 @@ export default function Signin() {
         disabled={submitLoading}
         className={`w-full rounded-xl py-2.5 font-semibold text-white shadow-md transition
           ${submitLoading
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+            : "bg-gradient-to-r from-neutral-700 to-neutral-800 hover:from-neutral-800 hover:to-neutral-900"
           }`}
       >
         {submitLoading ? (

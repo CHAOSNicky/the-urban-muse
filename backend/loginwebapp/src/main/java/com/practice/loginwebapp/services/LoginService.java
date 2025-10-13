@@ -21,10 +21,7 @@ public class LoginService{
     private PasswordEncoder encoder;
     
     public boolean storecred(Login logincred){
-        
-        logincred.setPassword(encoder.encode(logincred.getPassword()));
-        Login saved = loginrepo.save(logincred);
-        
-        return saved != null;
+        loginrepo.save(logincred);
+        return true;
     }
 }

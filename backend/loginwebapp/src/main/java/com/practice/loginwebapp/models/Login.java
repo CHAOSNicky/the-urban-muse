@@ -15,48 +15,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Login {
 
-        
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-        @Column(unique = true)
-        private String username;
+    @Column(unique = true)
+    private String username;
 
-        private String password;
-
-
-        
-        // public Login() {
-        //         System.out.println("Entered Custom Model Class");
-        //     }
-
-        // public Login(String username, String password) {
-        //         this.username = username;
-        //         this.password = password;
-        //         System.out.println("Entered Argument Model Class");
-        //     }
-
-
-        // public Login(String username, String password){
-        //     // System.out.println(
-        //     //         "I'm here in DTD"
-        //     //     );
-        //     // System.out.println(username + " " + password);
-        //     this.username = username;
-        //     this.password = password;
-        // }
-
-        // public Login(){
-        //         System.out.println(
-        //             "I'm here"
-        //         );
-        // }
-
-          // @Override
-          //   public String toString() {
-          //       return "Product [id=" + id + ", name=" + username + ", password=" + password + "]";
-          //   }
+    private String fullName;
 
 }

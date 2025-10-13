@@ -2,6 +2,8 @@ package com.practice.loginwebapp.controllers;
 
 import java.util.Map;
 
+import com.practice.loginwebapp.dtos.Signin;
+import com.practice.loginwebapp.dtos.Signup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
@@ -34,12 +36,10 @@ import jakarta.servlet.http.HttpServletResponse;
 public class LoginController {
 
     private final LoginRepo repo;
-    private final PasswordEncoder encoder;
     private final JwtUtil jwtUtil;
 
-    public LoginController(LoginRepo repo, PasswordEncoder encoder, JwtUtil jwtUtil) {
+    public LoginController(LoginRepo repo, JwtUtil jwtUtil) {
         this.repo = repo;
-        this.encoder = encoder;
         this.jwtUtil = jwtUtil;
     }
 
@@ -49,14 +49,18 @@ public class LoginController {
 
     @Autowired
     StringRedisTemplate redistemplate;
-    
 
     @PostMapping("/signup")
-    public ResponseEntity<String> storeLoginCred(@RequestBody Login logincred,
-                                                 @RequestParam String otp){
+    public ResponseEntity<String> storeLoginCred(@RequestBody Signup signup){
             // System.out.println("Got data------------------------------------------------------------------------------------------------------------------------------------------");
             // System.out.println(logincred);
-            String username = logincred.getUsername();
+            String username = signup.getEmail();
+            String otp = signup.getAuthCode();
+
+            Login logincred = new Login();
+
+            logincred.setUsername(username);
+            logincred.setFullName(signup.getFullName());
 
             String storedotp = redistemplate.opsForValue().get("OTP_" + username);
 
@@ -78,30 +82,35 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> body, HttpServletResponse response) {
+    public ResponseEntity<String> login(@RequestBody Signin signin, HttpServletResponse response) {
 
         System.out.println("vandhuten------------------------------------------------------------------------------------------------------------------------------------");
 
-        String username = body.get("username");
-        String password = body.get("password");
+        String username = signin.getEmail();
+        String otp = signin.getAuthCode();
 
         Login user = repo.findByUsername(username)
                 .orElse(null);
 
         // System.out.println(user.getUsername());
+        if(user == null){
+            System.out.println("User is Null");
+        }
+        else if(!otp.equals(redistemplate.opsForValue().get("OTP_" + username))){
+            System.out.println("Invalid OTP");
+        }
 
-        if (user == null || !encoder.matches(password, user.getPassword())) {
+        if (user == null || !otp.equals(redistemplate.opsForValue().get("OTP_" + username))) {
 
+            System.out.println("Username or OTP does not match");
 
-            System.out.println("Password does not match");
-            
-            return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
+            return ResponseEntity.status(401).body("Invalid credentials");
         }
 
         // System.out.println("here it came");
 
         String token = jwtUtil.generateToken(username);
-        
+
         ResponseCookie cookie = ResponseCookie
         .from("token", token)
         .httpOnly(false)       // Prevent access from JavaScript
@@ -115,7 +124,7 @@ public class LoginController {
 
         System.out.println("Cookies are set");
 
-        return ResponseEntity.ok(Map.of("message", "Login successful"));
+        return ResponseEntity.ok("Login successful");
 
     }
 

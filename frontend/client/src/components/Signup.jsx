@@ -43,17 +43,36 @@ export default function Signup() {
       announce("❌ Please enter a valid email address.");
       return;
     }
-    if (!otp || otp.length < 4) {
+    if (!otp || otp.length < 6) {
       announce("❌ Please enter the OTP sent to your email.");
       return;
     }
 
+    setSubmitLoading(true);
+
     try {
-      setSubmitLoading(true);
-      // TODO: replace with your actual signup endpoint
-      // const res = await fetch("/api/signup", { ... })
-      await new Promise((r) => setTimeout(r, 900)); // demo delay
-      announce("✅ Signed up successfully.");
+      const res = await fetch("http://localhost:8080/api/signup",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {"Content-Type" : "application/json"},
+          body: JSON.stringify({"fullName": name,
+                                "email": emailNorm,
+                                "authCode": otp}
+          )
+        }
+      )
+
+      if(!res.ok){
+        try{
+          const data = await res.JSON();
+        }
+        catch{  }
+        announce("⚠️ Signup Failed");
+        return;
+      }
+
+      announce("✅ Account created! Redirecting...");
     } catch (err) {
       console.error(err);
       announce("⚠️ Signup failed. Try again.");
@@ -61,6 +80,7 @@ export default function Signup() {
       setSubmitLoading(false);
     }
   };
+
 
   async function otpCall() {
     try {
@@ -74,7 +94,7 @@ export default function Signup() {
       const res = await fetch("http://localhost:8080/api/otp/generate", {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/JSON" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({"fullName" : name,
                               "email": emailNorm }),
       });
@@ -108,9 +128,9 @@ export default function Signup() {
             Full name
           </label>
           <div className="relative">
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
               {/* user icon */}
-              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" className="opacity-60">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" className="opacity-70">
                 <path
                   d="M12 12c2.7 0 4.5-2.2 4.5-5S14.7 2 12 2 7.5 4.2 7.5 7s1.8 5 4.5 5zm0 2c-3 0-9 1.5-9 4.5V22h18v-3.5c0-3-6-4.5-9-4.5z"
                   fill="currentColor"
@@ -122,7 +142,7 @@ export default function Signup() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 bg-white/70 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition shadow-sm"
+              className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-300 bg-white/90 text-gray-800 placeholder-gray-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 focus:border-gray-500 transition shadow-sm"
               placeholder="John Doe"
             />
           </div>
@@ -142,9 +162,9 @@ export default function Signup() {
             Email address
           </label>
           <div className="relative">
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
               {/* mail icon */}
-              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" className="opacity-60">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" className="opacity-70">
                 <path
                   d="M4 6h16a1 1 0 0 1 .8 1.6l-8 10a1 1 0 0 1-1.6 0l-8-10A1 1 0 0 1 4 6Zm0 0l8 5 8-5"
                   fill="none"
@@ -161,7 +181,7 @@ export default function Signup() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-200 bg-white/70 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition shadow-sm"
+              className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-300 bg-white/90 text-gray-800 placeholder-gray-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 focus:border-gray-500 transition shadow-sm"
               placeholder="you@example.com"
             />
           </div>
@@ -193,7 +213,7 @@ export default function Signup() {
                 setOtp(v);
               }
             }}
-            className="flex-1 tracking-widest tabular-nums px-3 py-2 rounded-xl border border-gray-200 bg-white/70 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition shadow-sm text-center font-semibold"
+            className="flex-1 tracking-widest tabular-nums px-3 py-2 rounded-xl border border-gray-300 bg-white/90 text-gray-800 placeholder-gray-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 focus:border-gray-500 transition shadow-sm text-center font-semibold"
             placeholder="••••••"
             aria-describedby="signup-otp-help"
           />
@@ -203,8 +223,8 @@ export default function Signup() {
             disabled={otpLoading || cooldown > 0}
             className={`px-4 py-2 rounded-xl font-semibold text-white shadow-sm transition
               ${otpLoading || cooldown > 0
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-neutral-700 to-neutral-800 hover:from-neutral-800 hover:to-neutral-900"
               }`}
           >
             {otpLoading ? (
@@ -219,7 +239,7 @@ export default function Signup() {
             )}
           </button>
         </div>
-        <p id="signup-otp-help" className="mt-1 text-xs text-gray-500">
+        <p id="signup-otp-help" className="mt-1 text-xs text-gray-600">
           We’ll send a code to verify your email.
         </p>
       </div>
@@ -230,8 +250,8 @@ export default function Signup() {
         disabled={submitLoading}
         className={`w-full rounded-xl py-2.5 font-semibold text-white shadow-md transition
           ${submitLoading
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+            : "bg-gradient-to-r from-neutral-700 to-neutral-800 hover:from-neutral-800 hover:to-neutral-900"
           }`}
       >
         {submitLoading ? (
