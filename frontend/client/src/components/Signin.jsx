@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
  
-export default function Signin() {
+export default function Signin({setName}) {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
@@ -56,15 +56,17 @@ export default function Signin() {
       );
 
       if(!res.ok){
-        const data = await res.text();
-        console.log(data);
+        const data = await res.json();
+        console.log(data.message);
         announce("⚠️ Login failed. Try again.");
         return;
       }      
 
-      const data = await res.text();
-      console.log(data)
+      const data = await res.json();
+      console.log(data.message)
       announce("✅ Logged in successfully.");
+        setName(data.fullname);
+        console.log(data.fullname);
       setTimeout(()=>{
         navigate("/")
       },2000);

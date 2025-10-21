@@ -2,10 +2,10 @@ import React from 'react';
 import './TopBanner.css';
 import MainImage from './MainImage';
 
-function TopBanner() {
+function TopBanner({name}) {
   return (
     <div className="relative">
-      {/* 🔴 Top Scrolling Banner */}
+      {/* Top Scrolling Banner */}
       <div className="bg-black overflow-hidden whitespace-nowrap py-2 relative z-20">
         <div className="scrolling-text flex">
           <div className="animate-marquee flex items-center gap-8 font-medium tracking-wide text-white">
@@ -25,9 +25,9 @@ function TopBanner() {
       </div>
 
       {/* 🖼️ Image Container (constrained zoom-out) */}
-      <MainImage />
+      <MainImage name={name}/>
 
-      {/* 🔴 Bottom Scrolling Banner */}
+      {/* Bottom Scrolling Banner */}
       <div className="bg-black overflow-hidden whitespace-nowrap py-2 relative z-20">
         <div className="scrolling-text flex">
           <div className="animate-marquee1 flex items-center gap-8 font-medium tracking-wide text-white">

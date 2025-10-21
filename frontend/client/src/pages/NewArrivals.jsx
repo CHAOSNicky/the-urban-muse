@@ -33,6 +33,7 @@ const trendingCategories = [
 function NewArrivals() {
   return (
     <div className="bg-[#edeaf5] py-12">
+      
       <h2 className="text-4xl text-center font-medium font-sans mb-11">🎉 NEW ARRIVALS</h2>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 px-8">
@@ -64,7 +65,7 @@ function NewArrivals() {
 
 
             {/* Label section */}
-            <div className="h-[8%] flex sm:items-end md:items-end justify-center">
+            <div className="h-[8%] flex sm:items-end md:items-end justify-center pt-4 sm:pt-0">
               <p className="text-center text-xs sm:text-sm md:text-base font-semibold">
                 {item.name}
               </p>
@@ -85,59 +86,3 @@ export default NewArrivals;
 
 
 
-// import React from 'react';
-// import trendingcategoryimage1 from '../assets/IMG_7329.PNG';
-// import trendingcategoryimage2 from '../assets/IMG_7330.PNG';
-// import trendingcategoryimage3 from '../assets/IMG_7331.PNG';
-// import trendingcategoryimage4 from '../assets/IMG_7332.PNG';
-// import trendingcategoryimage5 from '../assets/IMG_7334.PNG';
-
-// // Sample data with two images per card
-// const trendingCategories = [
-//   { img1: trendingcategoryimage1, img2: trendingcategoryimage2, name: 'NEW ARRIVALS' },
-//   { img1: trendingcategoryimage2, img2: trendingcategoryimage3, name: 'QUIRKY SETS' },
-//   { img1: trendingcategoryimage3, img2: trendingcategoryimage4, name: 'CLASSIC SOLID SETS' },
-//   { img1: trendingcategoryimage4, img2: trendingcategoryimage5, name: 'T-SHIRT SETS' },
-//   { img1: trendingcategoryimage5, img2: trendingcategoryimage1, name: 'FULL SLEEVE SETS' },
-//   { img1: trendingcategoryimage1, img2: trendingcategoryimage3, name: 'SUMMER SPECIALS' },
-//   { img1: trendingcategoryimage2, img2: trendingcategoryimage4, name: 'KIDS COLLECTION' },
-//   { img1: trendingcategoryimage3, img2: trendingcategoryimage5, name: 'MOMMY & ME' },
-// ];
-
-// function NewArrivals() {
-//   return (
-//     <div className="bg-[#edeaf5] py-12">
-//       <h2 className="text-4xl text-center font-medium font-sans mb-11">
-//         NEW ARRIVALS
-//       </h2>
-
-//       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 px-4">
-//         {trendingCategories.map((item, index) => (
-//           <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col group h-500px">
-//             {/* Image swap on hover */}
-//             <div className="relative h-[85%] w-full overflow-hidden">
-//               {/* First image */}
-//               <div className="absolute top-0 left-0 w-full h-full transition-transform duration-500 group-hover:-translate-x-full">
-//                 <img src={item.img1} alt="image1" className="w-full h-full object-cover" />
-//               </div>
-
-//               {/* Second image - starts from the right, slides in */}
-//               <div className="absolute top-0 left-full w-full h-full transition-transform duration-500 group-hover:-translate-x-full">
-//                 <img src={item.img2} alt="image2" className="w-full h-full object-cover" />
-//               </div>
-//             </div>
-
-//             {/* Card label */}
-//             <div className="h-[15%] flex items-center justify-center p-2">
-//               <p className="text-center text-xs sm:text-sm md:text-base font-medium">
-//                 {item.name}
-//               </p>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default NewArrivals;

@@ -4,9 +4,9 @@ import TrendingCategory from './TrendingCategory';
 import NewArrivals from './NewArrivals';
 import ReviewPage from './ReviewPage';
 
-function MainHome(){
+function MainHome({name}){
     return(<div>
-            <TopBanner />
+            <TopBanner name={name}/>
             <TrendingCategory />
             <NewArrivals />
             <ReviewPage />

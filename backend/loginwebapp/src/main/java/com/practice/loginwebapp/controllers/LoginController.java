@@ -1,5 +1,6 @@
 package com.practice.loginwebapp.controllers;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.practice.loginwebapp.dtos.Signin;
@@ -82,8 +83,9 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Signin signin, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Signin signin, HttpServletResponse response) {
 
+        Map<String, String> result = new HashMap<>();
         System.out.println("vandhuten------------------------------------------------------------------------------------------------------------------------------------");
 
         String username = signin.getEmail();
@@ -103,10 +105,12 @@ public class LoginController {
         if (user == null || !otp.equals(redistemplate.opsForValue().get("OTP_" + username))) {
 
             System.out.println("Username or OTP does not match");
+            result.put("message", "Invalid Credentials");
 
-            return ResponseEntity.status(401).body("Invalid credentials");
+            return ResponseEntity.status(401).body(result);
         }
 
+        String fullname = user.getFullName();
         // System.out.println("here it came");
 
         String token = jwtUtil.generateToken(username);
@@ -124,7 +128,10 @@ public class LoginController {
 
         System.out.println("Cookies are set");
 
-        return ResponseEntity.ok("Login successful");
+        result.put("message", "Login Successful");
+        result.put("fullname", fullname);
+        System.out.println(result);
+        return ResponseEntity.ok(result);
 
     }
 

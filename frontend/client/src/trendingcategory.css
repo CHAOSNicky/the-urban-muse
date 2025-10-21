@@ -1,0 +1,12 @@
+/* hide scrollbar (Chrome, Edge, Safari) */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* hide scrollbar (Firefox) */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* smooth scrolling for programmatic scrolls */
+.smooth-scroll { scroll-behavior: smooth; }
+
+/* initial/visible animation states for reveal */
+.reveal-item { opacity: 0; transform: translateY(16px); transition: opacity .45s ease, transform .45s cubic-bezier(.2,.9,.2,1); }
+.reveal-item.in-view { opacity: 1; transform: translateY(0); }
