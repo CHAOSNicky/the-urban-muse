@@ -3,7 +3,7 @@ import Signin from "./Signin";
 import Signup from "./Signup";
 import { Link } from 'react-router-dom';
 
-export default function Login({setName}) {
+export default function Login() {
   const [active, setActive] = useState("login");
 
   return (
@@ -83,7 +83,7 @@ export default function Login({setName}) {
               active === "login" ? "opacity-100" : "opacity-0 absolute"
             }`}
           >
-            {active === "login" && <Signin setName={setName} />}
+            {active === "login" && <Signin />}
           </div>
           <div
             className={`transition-opacity duration-500 ${

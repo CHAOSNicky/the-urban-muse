@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
+import {LoginContext} from '../Contexts/LoginContexts'
  
-export default function Signin({setName}) {
+export default function Signin() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
@@ -13,6 +14,9 @@ export default function Signin({setName}) {
 
   const normalizeEmail = (val) => val.trim();
   const isValidEmail = (val) => /\S+@\S+\.\S+/.test(val);
+  
+  const {setName} = useContext(LoginContext);
+  const {setLogin} = useContext(LoginContext);
 
   useEffect(() => {
     if (!cooldown) return;
@@ -66,6 +70,7 @@ export default function Signin({setName}) {
       console.log(data.message)
       announce("✅ Logged in successfully.");
         setName(data.fullname);
+        setLogin(true);
         console.log(data.fullname);
       setTimeout(()=>{
         navigate("/")

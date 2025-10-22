@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import MainHome from './pages/MainHome';
 import Login from './components/Login';
+import {LoginProvider} from './Contexts/LoginContexts'
 
 export default function App(){
-        const [name, setName] = useState(null);
-
+        
         return (
+        <LoginProvider>
         <Routes>
-            <Route path="/" element={<MainHome name={name}/>} />
-            <Route path="/login" element={<Login setName={setName}/>}/>
+            <Route path="/" element={<MainHome />} />
+            <Route path="/login" element={<Login />}/>
         </Routes>
+        </ LoginProvider>
         )
     }

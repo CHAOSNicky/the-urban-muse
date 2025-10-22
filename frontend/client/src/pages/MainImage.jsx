@@ -1,14 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ShoppingCartIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import promoImage from '../assets/photo-1567401893414-76b7b1e5a7a5.jpeg';
 import { Link, useLocation } from 'react-router-dom';
+import {LoginContext} from '../Contexts/LoginContexts'
 
-function MainImage({name}) {
+function MainImage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-
+  const {name, login, setLogin, setName} = useContext(LoginContext);
+  
+  console.log(login);
   // Close the mobile menu when route changes
   useEffect(() => setMobileOpen(false), [location.pathname]);
+
+  const removeUser = async (e) =>{
+    const res = await fetch("http://localhost:8080/api/logout",{
+      method: "GET",
+      credentials: "include",
+      headers: {"Content-Type" : "application/json"},
+    });
+
+    if(!res){
+      console.log("LOGOUT Failed");
+      return;
+    }
+    setLogin(false);
+    setName("");
+    localStorage.setItem("login", JSON.stringify(false));
+    localStorage.removeItem("name");
+    const data = await res.json();
+    console.log(data.message);
+  }
 
   return (
     <div className="relative">
@@ -46,9 +68,12 @@ function MainImage({name}) {
 
             {/* Right: actions (icons on mobile, full on desktop) */}
             <div className="ml-auto flex items-center gap-4 sm:gap-6">
-              <Link to="/Login" aria-label="Go To Login" className="hidden md:block text-sm sm:text-base">
-                LOGIN / SIGNUP
-              </Link>
+              {login? (<div className="hidden md:block text-sm sm:text-base">
+                          <button onClick={removeUser}> LOGOUT </button>
+                       </div>) 
+                    : <Link to="/login" className="hidden md:block text-sm sm:text-base">
+                          <button> LOGIN / SIGNUP </button>
+                      </Link>}
               <button className="p-1" aria-label="Search">
                 <MagnifyingGlassIcon className="h-6 w-6 sm:h-7 sm:w-7" />
               </button>
@@ -69,9 +94,12 @@ function MainImage({name}) {
             <Link to="/new" className="py-2">NEW ARRIVALS</Link>
             <Link to="/contact" className="py-2">CONTACT</Link>
             <Link to="/about" className="py-2">ABOUT</Link>
-            <Link to="/Login" className="py-2 flex items-center gap-2">
-              <UserIcon className="w-5 h-5" /> LOGIN / SIGNUP
-            </Link>
+            {login? (<div className="py-2 flex items-center gap-2">
+                      <button className="w-5 h-5" > LOGOUT </button>
+                    </div>) 
+            : <Link to="/login" className="py-2 flex items-center gap-2">
+              <button className="w-5 h-5" > LOGIN / SIGNUP </button>
+            </Link>}
           </div>
         </div>
       </div>

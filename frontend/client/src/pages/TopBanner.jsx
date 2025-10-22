@@ -2,7 +2,7 @@ import React from 'react';
 import './TopBanner.css';
 import MainImage from './MainImage';
 
-function TopBanner({name}) {
+function TopBanner() {
   return (
     <div className="relative">
       {/* Top Scrolling Banner */}
@@ -25,7 +25,7 @@ function TopBanner({name}) {
       </div>
 
       {/* 🖼️ Image Container (constrained zoom-out) */}
-      <MainImage name={name}/>
+      <MainImage />
 
       {/* Bottom Scrolling Banner */}
       <div className="bg-black overflow-hidden whitespace-nowrap py-2 relative z-20">

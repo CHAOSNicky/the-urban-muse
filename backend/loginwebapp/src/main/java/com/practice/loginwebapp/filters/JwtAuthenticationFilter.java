@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
    private JwtUtil jwtUtil;
 
    @Autowired
-   private UserDetailsService userdetailservice;
+   private UserDetailsService userDetailsService;
 
    // public endpoints to skip (login, signup, swagger/h2-console etc.)
    private static final List<String> EXCLUDE_URLS = List.of(
@@ -64,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
 
-
+       System.out.println("JwtAuthenticationFilter triggered for Authentication Path");
        // 2) Extract token (prefer Authorization header, fallback to cookie named "token")
        String token = null;
        String authHeader = request.getHeader("Authorization");
@@ -83,9 +83,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
        if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
            try {
                String username = jwtUtil.extractUsername(token);
+               System.out.println("JwtAuthenticationFilter triggered for username: " + username);
                if (username != null) {
-                    UserDetails userDetails =  userdetailservice.loadUserByUsername(username);
+                    UserDetails userDetails =  userDetailsService.loadUserByUsername(username);
+                    System.out.println("JwtAuthenticationFilter triggered for UserDetails: " + userDetails);
                    if (jwtUtil.validateToken(token, userDetails)) {
+                       System.out.println("JwtAuthenticationFilter triggered for token: " + token);
                        UsernamePasswordAuthenticationToken authentication =
                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

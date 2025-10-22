@@ -17,12 +17,20 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("Entered loadByUsername");
         Login user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        System.out.println("User Details are : " + user.getUsername());
+        String password = ""; // intentionally empty, JWT-based auth
 
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())// Ensure password is encoded with BCrypt
-                .authorities("USER") // Add roles or authorities if needed
+                .withUsername(user.getUsername())
+                .password(password)                    // <-- required by builder
+                .authorities("ROLE_USER")              // or "USER" depending how you check roles
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
                 .build();
     }
 }

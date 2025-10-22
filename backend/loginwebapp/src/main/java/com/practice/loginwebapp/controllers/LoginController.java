@@ -137,20 +137,22 @@ public class LoginController {
 
 
     @GetMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletResponse response){
+    public ResponseEntity<Map<String, String>> logout(HttpServletResponse response){
 
+            Map <String, String> result = new HashMap<>();
+            System.out.println("Entered to logout");
             ResponseCookie cookie = ResponseCookie
             .from("token", "")
             .httpOnly(false)
-            .secure(true)
+            .secure(false)
             .path("/")
             .maxAge(0)
             .sameSite("None")
             .build();
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-            return ResponseEntity.status(HttpStatus.OK).body("Cookies are cleared and LoggedOut Successfully");
+            result.put("message", "Cookies are cleared and LoggedOut Successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
 }

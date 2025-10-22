@@ -6,7 +6,7 @@ import ReviewPage from './ReviewPage';
 
 function MainHome({name}){
     return(<div>
-            <TopBanner name={name}/>
+            <TopBanner />
             <TrendingCategory />
             <NewArrivals />
             <ReviewPage />
