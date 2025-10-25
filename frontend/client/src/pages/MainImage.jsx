@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { ShoppingCartIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import promoImage from '../assets/photo-1567401893414-76b7b1e5a7a5.jpeg';
 import { Link, useLocation } from 'react-router-dom';
@@ -8,10 +8,50 @@ function MainImage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const {name, login, setLogin, setName} = useContext(LoginContext);
-  
-  console.log(login);
+  const [open, setOpen] = useState(false);
+
   // Close the mobile menu when route changes
   useEffect(() => setMobileOpen(false), [location.pathname]);
+
+  const menuRef = useRef(null); // reference to wrapper element
+
+  // 1) Close dropdown if user clicks outside it, and close on Escape
+  useEffect(() => {
+    function handleDocMouse(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    function handleDocKey(e) {
+      if (e.key === 'Escape') {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleDocMouse);
+    document.addEventListener('keydown', handleDocKey);
+    return () => {
+      document.removeEventListener('mousedown', handleDocMouse);
+      document.removeEventListener('keydown', handleDocKey);
+    };
+  }, []);
+
+  // 2) Close dropdown if screen becomes smaller than lg (1024px)
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1024px)");
+    const handler = (e) => {
+      if (!e.matches) setOpen(false); // if viewport < 1024px, close
+    };
+
+    handler(mql);
+    if (typeof mql.addEventListener === "function") {
+      mql.addEventListener("change", handler);
+      return () => mql.removeEventListener("change", handler);
+    } else if (typeof mql.addListener === "function") {
+      mql.addListener(handler);
+      return () => mql.removeListener(handler);
+    }
+  }, []);
 
   const removeUser = async (e) =>{
     const res = await fetch("http://localhost:8080/api/logout",{
@@ -36,7 +76,7 @@ function MainImage() {
     <div className="relative">
       {/* Header (overlayed on image). On mobile it’s slightly shorter */}
       <div className="absolute inset-x-0 top-0 z-20">
-        <div className="h-14 sm:h-[60px] px-4 sm:px-6 bg-[#edeaf5]/90 backdrop-blur supports-[backdrop-filter]:bg-[#edeaf5]/70">
+        <div className="h-14 sm:h-[60px] px-4 sm:px-6 bg-[#edeaf5]/90 backdrop-blur supports-[backdrop-filter]:bg-[#edeaf5]/40">
           <div className="h-full flex items-center">
             {/* Left: Brand + Mobile hamburger */}
             <div className="flex items-center gap-3">
@@ -66,14 +106,43 @@ function MainImage() {
               <Link to="/about" className="">ABOUT</Link>
             </nav>
 
-            {/* Right: actions (icons on mobile, full on desktop) */}
-            <div className="ml-auto flex items-center gap-4 sm:gap-6">
-              {login? (<div className="hidden md:block text-sm sm:text-base">
-                          <button onClick={removeUser}> LOGOUT </button>
-                       </div>) 
-                    : <Link to="/login" className="hidden md:block text-sm sm:text-base">
-                          <button> LOGIN / SIGNUP </button>
-                      </Link>}
+            {/* Right: actions (icons on mobile, full on desktop)
+                NOTE: attach menuRef to the wrapper that contains the user button AND the dropdown
+            */}
+            <div className="ml-auto flex items-center gap-4 sm:gap-6" ref={menuRef}>
+              <div className="relative"> {/* make this relative so absolute dropdown is positioned correctly */}
+                <button onClick={() => setOpen(prev => !prev)} className="p-1 rounded-md">
+                  <UserIcon className="h-6 w-6 hidden lg:block"/>
+                </button>
+
+                {/* Render dropdown only when open and only on lg+ (Tailwind classes hide it automatically on small screens) */}
+                {open && (
+                  <div className="
+                                  hidden lg:block absolute left-1/2 -translate-x-1/2 mt-3 w-40
+                                  bg-transparent                /* let header show through */
+                                  backdrop-blur supports-[backdrop-filter]:bg-[#edeaf5]/50
+                                  border border-white/10       /* subtle edge to distinguish it */
+                                  rounded-xl shadow-lg z-50
+                                  transition-all duration-200 ease-out
+                              ">
+                    {login ? (
+                      <div className="text-sm sm:text-base px-4 py-2 ">
+                        <button onClick={() => { removeUser(); setOpen(false); }}>
+                          LOGOUT
+                        </button>
+                      </div>
+                    ) : (
+                      <Link to="/login" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm sm:text-base hover:bg-gray-100">
+                        LOGIN / SIGNUP
+                      </Link>
+                    )}
+                    <Link to="/admin" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm sm:text-base hover:bg-gray-100">
+                      ADMIN
+                    </Link>
+                  </div>
+                )}
+              </div>
+
               <button className="p-1" aria-label="Search">
                 <MagnifyingGlassIcon className="h-6 w-6 sm:h-7 sm:w-7" />
               </button>
@@ -98,8 +167,9 @@ function MainImage() {
                       <button className="w-5 h-5" > LOGOUT </button>
                     </div>) 
             : <Link to="/login" className="py-2 flex items-center gap-2">
-              <button className="w-5 h-5" > LOGIN / SIGNUP </button>
+              <button className="" > LOGIN / SIGNUP </button>
             </Link>}
+            <Link to="/admin" className="py-2">ADMIN</Link>
           </div>
         </div>
       </div>
