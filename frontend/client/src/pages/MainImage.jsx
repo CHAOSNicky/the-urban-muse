@@ -61,6 +61,7 @@ function MainImage() {
     });
 
     if(!res){
+      // alert("Server did not reach");
       console.log("LOGOUT Failed");
       return;
     }
@@ -119,24 +120,34 @@ function MainImage() {
                 {open && (
                   <div className="
                                   hidden lg:block absolute left-1/2 -translate-x-1/2 mt-3 w-40
-                                  bg-transparent                /* let header show through */
-                                  backdrop-blur supports-[backdrop-filter]:bg-[#edeaf5]/50
-                                  border border-white/10       /* subtle edge to distinguish it */
+                                  bg-black/60          /* let header show through */
+                                  
+                                  border border-white/70   /* subtle edge to distinguish it */
                                   rounded-xl shadow-lg z-50
                                   transition-all duration-200 ease-out
                               ">
                     {login ? (
                       <div className="text-sm sm:text-base px-4 py-2 ">
-                        <button onClick={() => { removeUser(); setOpen(false); }}>
+                        <button onClick={() => { removeUser(); setOpen(false); }} className="w-full text-white text-sm sm:text-base px-4 py-2 my-1
+          hover:backdrop-blur-md
+          border border-transparent
+          rounded-lg">
                           LOGOUT
                         </button>
                       </div>
                     ) : (
-                      <Link to="/login" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm sm:text-base hover:bg-gray-100">
+                      <Link to="/login" onClick={() => setOpen(false)} className="block text-white/70 text-sm sm:text-base px-4 py-2
+          hover:backdrop-blur-md
+          border border-transparent
+          rounded-lg">
                         LOGIN / SIGNUP
                       </Link>
                     )}
-                    <Link to="/admin" onClick={() => setOpen(false)} className="block px-4 py-2 text-sm sm:text-base hover:bg-gray-100">
+                    <Link to="/admin" onClick={() => setOpen(false)} className=" block text-white/70 text-sm sm:text-base px-4 py-2
+        
+         hover:backdrop-blur-md
+        border border-transparent
+        rounded-lg">
                       ADMIN
                     </Link>
                   </div>
@@ -164,7 +175,7 @@ function MainImage() {
             <Link to="/contact" className="py-2">CONTACT</Link>
             <Link to="/about" className="py-2">ABOUT</Link>
             {login? (<div className="py-2 flex items-center gap-2">
-                      <button className="w-5 h-5" > LOGOUT </button>
+                      <button onClick={removeUser} className="w-5 h-5" > LOGOUT </button>
                     </div>) 
             : <Link to="/login" className="py-2 flex items-center gap-2">
               <button className="" > LOGIN / SIGNUP </button>
