@@ -16,7 +16,7 @@ public class AddProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int product_id;
+    private long product_id;
 
     private String productName;
     private String productDesc;
@@ -24,4 +24,5 @@ public class AddProduct {
     private String productSize;
     private float productPrice;
     private int productQuantity;
+    private String imageObjectKey;
 }

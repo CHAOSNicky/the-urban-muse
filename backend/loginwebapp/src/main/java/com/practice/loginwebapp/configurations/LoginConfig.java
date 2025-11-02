@@ -15,6 +15,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.beans.factory.annotation.Value;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+
 // import org.springframework.web.servlet.config.annotation.CorsRegistry;
 // import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,6 +31,8 @@ public class LoginConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Value("${aws.region}") String region;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -43,7 +51,7 @@ public class LoginConfig {
         .authorizeHttpRequests(auth -> auth
 
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/signup/**","/api/login/**", "/api/otp/generate/**").permitAll()
+                .requestMatchers("/api/signup/**","/api/login/**", "/api/otp/generate/**", "/api/s3/**", "/api/product/**").permitAll()
                 .anyRequest().authenticated()
                 
             )
@@ -66,6 +74,22 @@ public class LoginConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
         }
+
+    @Bean
+    public S3Presigner s3Presigner() {
+        return S3Presigner.builder()
+                .region(Region.of(region))
+                .credentialsProvider(DefaultCredentialsProvider.create())
+                .build();
+    }
+
+    @Bean
+    public S3Client s3Client() {
+        return S3Client.builder()
+                .region(Region.of(region))
+                .credentialsProvider(DefaultCredentialsProvider.create())
+                .build();
+    }
 
 }
  

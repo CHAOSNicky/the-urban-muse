@@ -5,6 +5,7 @@ export default function Admin(){
 
     const[form, setForm] = useState({
       "product_name" : "",
+      "product_desc" : "",
       "product_category" : "",
       "product_price" : "",
       "product_size" : "",
@@ -33,37 +34,76 @@ export default function Admin(){
    const onSubmit = async (e) => {
     e.preventDefault();
 
-    // basic client-side checks
-    if (!form.product_name.trim()) return alert("Product name is required");
-    if (!form.product_category) return alert("Pick a category");
-    if (!form.product_size) return alert("Pick a size");
-    if (!form.product_price || Number(form.product_price) <= 0) return alert("Price must be > 0");
-    if (!form.product_quantity || Number(form.product_quantity) < 0) return alert("Quantity must be >= 0");
+    try{
+        const requestBody = images.map(file =>({
+        fileName : file.name,
+        contentType : file.type,
+        size : file.size
+    }));
 
-    const data = new FormData();
-    Object.entries(form).forEach(([k, v]) => data.append(k, v));
-    images.forEach((file) => data.append("images", file)); // backend expects "images"[]
+    const res = await fetch("http://localhost:8080/api/s3/pre-signed-put-url",{
+        method : "POST",
+        headers : {"Content-Type" : "application/json" },
+        body : JSON.stringify(requestBody)
+    })
 
-    setSubmitting(true);
-    try {
-      // If using cookies/CSRF:
-      // const csrf = getCookie("XSRF-TOKEN");
-      const res = await fetch("/api/admin/products", {
-        method: "POST",
-        body: data,
-        credentials: "include",
-        // headers: csrf ? { "X-XSRF-TOKEN": csrf } : undefined,
-      });
-      if (!res.ok) throw new Error("Failed to save product");
-      alert("Product saved!");
-      // reset
-      setForm({ product_name: "", product_category: "", product_price: "", product_size: "", product_quantity: "" });
-      setImages([]);
-    } catch (err) {
-      console.error(err);
-      alert(err.message || "Error saving product");
-    } finally {
-      setSubmitting(false);
+    console.log("status:", res.status);
+    if (!res.ok) {
+    console.error("Presigning Failed", res.status, await res.text()); // 👈 see the real cause
+    return;
+    }
+
+    const urls = await res.json(); // e.g. ["https://s3...","https://s3...",...]
+    const imageKey = urls.map( p => p.key)
+
+    // Upload in parallel (or with a small concurrency cap)
+    await Promise.all(images.map((file, i) =>
+    fetch(urls[i].url, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file
+    }).then(r => {
+        if (!r.ok) throw new Error(`Upload failed ${r.status} for ${file.name}`);
+        console.log(`${file.name} uploaded. ETag:`, r.headers.get("ETag"));
+    })
+    ));
+
+    console.log("All uploads done ✅");
+
+    try{
+
+        const prodData = {
+            "productName" : form.product_name,
+            "productDesc" : form.product_desc,
+            "productCategory" : form.product_category,
+            "productPrice" : form.product_price,
+            "productSize" : form.product_size,
+            "productQuantity" : form.product_quantity,
+            imageKey
+        }
+        
+        const saveprod = await fetch("http://localhost:8080/api/product/add-product",{
+            method : "POST",
+            headers : {"Content-Type" : "application/json"},
+            body : JSON.stringify(prodData)
+        })
+
+        if(!saveprod.ok){
+            console.error("Presigning Failed", saveprod.status, await saveprod.text()); // 👈 see the real cause
+            return;
+        }
+
+        const result = saveprod.json();
+        console.log("Product Saved Successfully ✅");
+
+    }
+    catch(err){
+        console.error("Error in onSubmit:", err)
+    }
+
+    }
+    catch(err){
+        console.error("Error in onSubmit:", err);
     }
   };
 
@@ -99,6 +139,19 @@ export default function Admin(){
                         name="product_name"
                         placeholder="Product Name"
                         value={form.product_name}
+                        onChange={onChange}
+                        required
+                        className="border border-gray-300 rounded-xl p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
+                    />
+                </div>
+
+                 <div className="flex flex-col gap-2">
+                    <label htmlFor="product_desc" className="font-medium text-gray-900">Product Description</label>
+                    <input type="text"
+                        id="product_desc"
+                        name="product_desc"
+                        placeholder="Product Description"
+                        value={form.product_desc}
                         onChange={onChange}
                         required
                         className="border border-gray-300 rounded-xl p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
@@ -221,3 +274,37 @@ export default function Admin(){
         </div>
     );
 }
+
+
+//  // basic client-side checks
+//     if (!form.product_name.trim()) return alert("Product name is required");
+//     if (!form.product_category) return alert("Pick a category");
+//     if (!form.product_size) return alert("Pick a size");
+//     if (!form.product_price || Number(form.product_price) <= 0) return alert("Price must be > 0");
+//     if (!form.product_quantity || Number(form.product_quantity) < 0) return alert("Quantity must be >= 0");
+
+//     const data = new FormData();
+//     Object.entries(form).forEach(([k, v]) => data.append(k, v));
+//     images.forEach((file) => data.append("images", file)); // backend expects "images"[]
+
+//     setSubmitting(true);
+//     try {
+//       // If using cookies/CSRF:
+//       // const csrf = getCookie("XSRF-TOKEN");
+//       const res = await fetch("/api/admin/products", {
+//         method: "POST",
+//         body: data,
+//         credentials: "include",
+//         // headers: csrf ? { "X-XSRF-TOKEN": csrf } : undefined,
+//       });
+//       if (!res.ok) throw new Error("Failed to save product");
+//       alert("Product saved!");
+//       // reset
+//       setForm({ product_name: "", product_category: "", product_price: "", product_size: "", product_quantity: "" });
+//       setImages([]);
+//     } catch (err) {
+//       console.error(err);
+//       alert(err.message || "Error saving product");
+//     } finally {
+//       setSubmitting(false);
+//     }
