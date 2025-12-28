@@ -42,16 +42,24 @@ jobs:
         run: |
           mv backend/loginwebapp/target/*.jar backend/loginwebapp/target/app.jar
 
-      - name: Copy files to EC2
+      - name: Copy backend
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: |
-            backend/loginwebapp/target/app.jar
-            frontend/client/dist
+          source: backend/loginwebapp/target/app.jar
           target: /home/deploy/deploy
+
+      - name: Copy frontend
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          source: frontend/client/dist
+          target: /home/deploy/deploy
+
 
       - name: Restart app on EC2
         uses: appleboy/ssh-action@v1.0.3
