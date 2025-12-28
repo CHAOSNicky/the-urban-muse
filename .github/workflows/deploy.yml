@@ -31,6 +31,13 @@ jobs:
           npm install
           npm run build
 
+      - name: Debug frontend build output
+        run: |
+          echo "PWD:"
+          pwd
+          echo "Frontend tree:"
+          ls -R frontend
+
       - name: Normalize backend jar name
         run: |
           mv backend/loginwebapp/target/*.jar backend/loginwebapp/target/app.jar
