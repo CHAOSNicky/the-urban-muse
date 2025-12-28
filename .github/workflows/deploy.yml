@@ -21,7 +21,7 @@ jobs:
 
       - name: Build Spring Boot
         run: |
-          cd backend
+          cd backend/loginwebapp
           ./mvnw clean package -DskipTests
 
       - name: Build React
@@ -39,7 +39,7 @@ jobs:
           source: |
             backend/target/app.jar
             frontend/build
-          target: /home/ec2-user/deploy
+          target: /home/deploy/deploy
 
       - name: Restart app on EC2
         uses: appleboy/ssh-action@v1.0.3
@@ -50,4 +50,4 @@ jobs:
           script: |
             sudo systemctl restart springboot
             sudo rm -rf /usr/share/nginx/html/*
-            sudo cp -r /home/ec2-user/deploy/build/* /usr/share/nginx/html/
+            sudo cp -r /home/deploy/deploy/build/* /usr/share/nginx/html/
