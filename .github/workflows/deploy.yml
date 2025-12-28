@@ -52,6 +52,7 @@ jobs:
             frontend/client/dist
           target: /home/deploy/deploy
 
+
       # Restart backend service only
       - name: Restart backend on EC2
         uses: appleboy/ssh-action@v1.0.3
