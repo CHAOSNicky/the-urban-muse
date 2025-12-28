@@ -10,37 +10,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Setup Java 21
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'corretto'
 
-      # Build Spring Boot backend
       - name: Build Spring Boot
         run: |
           cd backend/loginwebapp
           chmod +x mvnw
           ./mvnw clean package -DskipTests
 
-      # Build frontend (Vite -> dist)
       - name: Build React
         run: |
           cd frontend/client
           npm install
           npm run build
 
-      # Normalize backend JAR name
+      - name: Debug frontend build output
+        run: |
+          echo "PWD:"
+          pwd
+          echo "Frontend tree:"
+          ls -R frontend
+
       - name: Normalize backend jar name
         run: |
           mv backend/loginwebapp/target/*.jar backend/loginwebapp/target/app.jar
 
-      # Copy backend + frontend to EC2 (UNCHANGED SSH KEY PART)
       - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -52,9 +53,7 @@ jobs:
             frontend/client/dist
           target: /home/deploy/deploy
 
-
-      # Restart backend service only
-      - name: Restart backend on EC2
+      - name: Restart app on EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
