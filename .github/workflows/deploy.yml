@@ -22,6 +22,7 @@ jobs:
       - name: Build Spring Boot
         run: |
           cd backend/loginwebapp
+          chmod +x mvnw
           ./mvnw clean package -DskipTests
 
       - name: Build React
