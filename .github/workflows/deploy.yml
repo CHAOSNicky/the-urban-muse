@@ -33,7 +33,7 @@ jobs:
 
       - name: Normalize backend jar name
         run: |
-          mv backend/loginwebapp/target/*.jar backend/target/app.jar
+          mv backend/loginwebapp/target/*.jar backend/loginwebapp/target/app.jar
 
       - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.7
