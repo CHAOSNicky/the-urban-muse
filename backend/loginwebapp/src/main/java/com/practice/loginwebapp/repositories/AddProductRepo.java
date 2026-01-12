@@ -12,6 +12,5 @@ import com.practice.loginwebapp.models.AddProduct;
 public interface AddProductRepo extends JpaRepository<AddProduct, Integer> {
 
     // List<AddProduct> findAll(); // Optional, since JpaRepository already provides this
-
     Optional<AddProduct> findByProductNameAndProductSize(String productname, String productsize);
 }

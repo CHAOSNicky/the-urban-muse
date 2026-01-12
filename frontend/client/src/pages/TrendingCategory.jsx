@@ -37,7 +37,7 @@ export default function TrendingCategory() {
   return (
     <section className="bg-[#edeaf5] py-12">
       <h2 className="text-4xl text-center font-medium font-sans mb-8">
-        TRENDING CATEGORIES
+        TRENDING CATEGORIES 👇
       </h2>
 
       {/* SCROLLABLE WRAPPER: keep horizontal scroll on ALL screen sizes */}
@@ -73,7 +73,7 @@ export default function TrendingCategory() {
               tabIndex={0}
               aria-label={c.label}
             >
-              <div className="w-full aspect-[3/4] relative overflow-hidden rounded-lg">
+              <div className="w-full aspect-[3/4] m-5 relative overflow-hidden rounded-lg">
                 <img
                   src={c.img}
                   alt={c.label}

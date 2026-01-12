@@ -17,12 +17,11 @@ public class AddProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long product_id;
-
+    private int productQuantity;
     private String productName;
     private String productDesc;
     private String productCategory;
     private String productSize;
     private float productPrice;
-    private int productQuantity;
     private String imageObjectKey;
 }
