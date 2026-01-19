@@ -39,9 +39,14 @@ public class ProductsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResposne("Product added successfully"));
     }
 
-    @GetMapping("/get-products-by-cat/{categoryName}")
+    @GetMapping("/by-cat/{categoryName}")
     public ResponseEntity<List<ProductOriginalResponseDto>> getProductByCategory(@PathVariable String categoryName){
         return ResponseEntity.status(HttpStatus.OK).body(getproductservice.getProductByCategory(categoryName));
+    }
+
+    @GetMapping("/by-id/{productId}")
+    public ResponseEntity<ProductOriginalResponseDto> getSingleProduct(@PathVariable Long productId){
+            return ResponseEntity.status(HttpStatus.OK).body(getproductservice.getSingleProduct(productId));
     }
 
     @GetMapping("/get-category")
