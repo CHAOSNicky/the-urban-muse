@@ -29,7 +29,10 @@ public class Product {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
+    private Boolean newArrival;
+
+    @Column(nullable = false, unique = true, columnDefinition = "TEXT")
     private String productImageObjectKey;
 
     @OneToMany(mappedBy = "product",

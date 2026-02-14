@@ -14,6 +14,7 @@ public class ProductRequest {
     private Long categoryId;
     private String name;
     private String description;
+    private Boolean newArrival;
     private List<String> productImageObjectKey = new ArrayList<>();
     private List<ProductVarientRequest> varients = new ArrayList<>();
 }

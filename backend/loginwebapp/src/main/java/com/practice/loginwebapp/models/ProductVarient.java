@@ -35,9 +35,6 @@ public class ProductVarient {
     @Column(nullable = false)
     private Long quantity;
 
-    @Column(nullable = false)
-    private Boolean newArrival;
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Date createdAt;

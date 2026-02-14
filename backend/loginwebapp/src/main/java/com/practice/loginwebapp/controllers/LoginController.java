@@ -5,81 +5,48 @@ import java.util.Map;
 
 import com.practice.loginwebapp.dtos.Signin;
 import com.practice.loginwebapp.dtos.Signup;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.practice.loginwebapp.dtos.SuccessResposne;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.practice.loginwebapp.models.Login;
+import com.practice.loginwebapp.models.Account;
 import com.practice.loginwebapp.repositories.LoginRepo;
-import com.practice.loginwebapp.services.LoginService;
+import com.practice.loginwebapp.services.AuthService;
 import com.practice.loginwebapp.util.JwtUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-
-
-// import lombok.Data;
-
 @RestController
-@RequestMapping("/api") 
-//@CrossOrigin(origins = "http://127.0.0.1:63342")
+@RequestMapping("/api")
 public class LoginController {
 
     private final LoginRepo repo;
     private final JwtUtil jwtUtil;
+    private final AuthService loginservice;
+    private final StringRedisTemplate redistemplate;
 
-    public LoginController(LoginRepo repo, JwtUtil jwtUtil) {
+
+    public LoginController(LoginRepo repo, JwtUtil jwtUtil, AuthService loginservice, StringRedisTemplate redistemplate) {
         this.repo = repo;
         this.jwtUtil = jwtUtil;
+        this.loginservice = loginservice;
+        this.redistemplate = redistemplate;
     }
 
 
-    @Autowired
-    LoginService loginservice;
-
-    @Autowired
-    StringRedisTemplate redistemplate;
-
     @PostMapping("/signup")
-    public ResponseEntity<String> storeLoginCred(@RequestBody Signup signup){
-            // System.out.println("Got data------------------------------------------------------------------------------------------------------------------------------------------");
-            // System.out.println(logincred);
-            String username = signup.getEmail();
-            String otp = signup.getAuthCode();
-
-            Login logincred = new Login();
-
-            logincred.setUsername(username);
-            logincred.setFullName(signup.getFullName());
-
-            String storedotp = redistemplate.opsForValue().get("OTP_" + username);
-
-            if(storedotp == null || !storedotp.equals(otp)){
-                   return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid OTP");
-            }
-            
-            boolean result = loginservice.storecred(logincred);
-            if(result){
-                return ResponseEntity.status(HttpStatus.CREATED).body("Successfully Saved");
-            }
-            else{
-                return ResponseEntity.status(HttpStatus.GONE).body("Not Saved Successfully");
-            }
-            
-            // return ResponseEntity.ok("Login Successful");
+    public ResponseEntity<SuccessResposne> storeLoginCred(@RequestBody Signup signup){
+              loginservice.createAccount(signup);
+              return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResposne("Account Created"));
     } 
-
 
 
     @PostMapping("/login")
@@ -91,7 +58,7 @@ public class LoginController {
         String username = signin.getEmail();
         String otp = signin.getAuthCode();
 
-        Login user = repo.findByUsername(username)
+        Account user = repo.findByEmail(username)
                 .orElse(null);
 
         // System.out.println(user.getUsername());
@@ -111,7 +78,6 @@ public class LoginController {
         }
 
         String fullname = user.getFullName();
-        // System.out.println("here it came");
 
         String token = jwtUtil.generateToken(username);
 

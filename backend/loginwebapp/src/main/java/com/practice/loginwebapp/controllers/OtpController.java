@@ -1,7 +1,7 @@
 package com.practice.loginwebapp.controllers;
 
 import com.practice.loginwebapp.dtos.Otp;
-import com.practice.loginwebapp.models.Login;
+import com.practice.loginwebapp.models.Account;
 import com.practice.loginwebapp.repositories.LoginRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import com.practice.loginwebapp.services.OtpService;
 import java.util.Optional;
 
 @RestController
-//@CrossOrigin(origins = "http://127.0.0.1:63342")
 @RequestMapping("/api/otp")
 public class OtpController {
 
@@ -27,7 +26,7 @@ public class OtpController {
         System.out.println("Generating OTP for "+ otp.getFullName());
 
         if(otp.getFullName() == null){
-            Optional<Login> name = loginrepo.findByUsername(otp.getEmail());
+            Optional<Account> name = loginrepo.findByEmail(otp.getEmail());
             otp.setFullName(name.get().getFullName());
         }
 

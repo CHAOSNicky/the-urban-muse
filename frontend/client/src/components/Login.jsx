@@ -38,9 +38,8 @@ export default function Login() {
         >
           {/* Sliding pill */}
           <div
-            className={`absolute inset-y-1 left-1 w-1/2 rounded-xl bg-gradient-to-r from-neutral-500 to-neutral-400 shadow transform transition-transform duration-500 ease-in-out ${
-              active === "login" ? "translate-x-0" : "translate-x-full"
-            }`}
+            className={`absolute inset-y-1 left-1 w-1/2 rounded-xl bg-gradient-to-r from-neutral-500 to-neutral-400 shadow transform transition-transform duration-500 ease-in-out ${active === "login" ? "translate-x-0" : "translate-x-full"
+              }`}
             aria-hidden="true"
           />
 
@@ -50,11 +49,10 @@ export default function Login() {
             role="tab"
             aria-selected={active === "login"}
             onClick={() => setActive("login")}
-            className={`relative z-10 flex-1 py-2 text-sm font-semibold rounded-xl transition-colors duration-300 ${
-              active === "login"
+            className={`relative z-10 flex-1 py-2 text-sm font-semibold rounded-xl transition-colors duration-300 ${active === "login"
                 ? "text-white"
                 : "text-gray-700 hover:text-gray-900"
-            }`}
+              }`}
           >
             LOGIN
           </button>
@@ -63,11 +61,10 @@ export default function Login() {
             role="tab"
             aria-selected={active === "signup"}
             onClick={() => setActive("signup")}
-            className={`relative z-10 flex-1 py-2 text-sm font-semibold rounded-xl transition-colors duration-300 ${
-              active === "signup"
+            className={`relative z-10 flex-1 py-2 text-sm font-semibold rounded-xl transition-colors duration-300 ${active === "signup"
                 ? "text-white"
                 : "text-gray-700 hover:text-gray-900"
-            }`}
+              }`}
           >
             SIGNUP
           </button>
@@ -79,16 +76,14 @@ export default function Login() {
             {active === "login" ? "Welcome Back 👋" : "Create Your Account 🚀"}
           </h2>
           <div
-            className={`transition-opacity duration-500 ${
-              active === "login" ? "opacity-100" : "opacity-0 absolute"
-            }`}
+            className={`transition-opacity duration-500 ${active === "login" ? "opacity-100" : "opacity-0 absolute"
+              }`}
           >
             {active === "login" && <Signin />}
           </div>
           <div
-            className={`transition-opacity duration-500 ${
-              active === "signup" ? "opacity-100" : "opacity-0 absolute"
-            }`}
+            className={`transition-opacity duration-500 ${active === "signup" ? "opacity-100" : "opacity-0 absolute"
+              }`}
           >
             {active === "signup" && <Signup />}
           </div>

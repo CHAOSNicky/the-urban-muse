@@ -15,4 +15,5 @@ public class ProductOriginalResponseDto {
     private String name;
     private String description;
     private List<String> productImageObjectKey;
+    private List<ProductVarientResponseDto> varientResponseList;
 }

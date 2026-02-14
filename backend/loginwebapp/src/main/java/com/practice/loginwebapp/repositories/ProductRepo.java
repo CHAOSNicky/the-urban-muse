@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepo extends JpaRepository<Product,Long> {
@@ -23,6 +24,15 @@ public interface ProductRepo extends JpaRepository<Product,Long> {
                 where lower(c.categoryName) = lower(:categoryName)
             """)
     List<ProductResponseDto> findProductsByCategoryName(@Param("categoryName") String categoryName);
+
+
+    @Query("""
+            SELECT p FROM Product p
+            LEFT JOIN FETCH p.varients
+            WHERE p.productId = :id
+            """)
+    Optional<Product> findProductWithVarient(@Param("id") Long id);
+
 
 //    List<Product> findByProductCategory_categoryName(String categoryName);
 }

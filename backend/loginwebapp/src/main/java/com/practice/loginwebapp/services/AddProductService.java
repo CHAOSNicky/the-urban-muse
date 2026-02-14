@@ -38,7 +38,9 @@ public class AddProductService {
         product.setProductCategory(category);
         product.setName(productrequest.getName());
         product.setDescription(productrequest.getDescription());
+        product.setNewArrival(productrequest.getNewArrival());
         String image_keys = String.join(",", productrequest.getProductImageObjectKey());
+        System.out.println(image_keys.length());
         product.setProductImageObjectKey(image_keys);
 
         for(ProductVarientRequest v : productrequest.getVarients()){
@@ -46,7 +48,6 @@ public class AddProductService {
             pv.setSize(v.getSize());
             pv.setQuantity(v.getQuantity());
             pv.setPrice(v.getPrice());
-            pv.setNewArrival(v.getNewArrival());
             pv.setProduct(product);
 
             product.getVarients().add(pv);

@@ -55,4 +55,6 @@ public class ProductsController {
                 .status(HttpStatus.OK)
                 .body(categoryservice.getAllCategories());
     }
+
+
 }
