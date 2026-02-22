@@ -48,7 +48,9 @@ jobs:
 
       - name: Build & Push Frontend Image
         run: |
-          docker build -t ghcr.io/${{ env.OWNER_LC }}/urban-frontend:latest ./frontend
+          docker build \
+            --build-arg VITE_S3_BASE_URL="${{ secrets.VITE_S3_BASE_URL }}" \
+            -t ghcr.io/${{ env.OWNER_LC }}/urban-frontend:latest ./frontend
           docker push ghcr.io/${{ env.OWNER_LC }}/urban-frontend:latest
 
       - name: Deploy to VM

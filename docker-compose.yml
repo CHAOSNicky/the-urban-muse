@@ -41,3 +41,5 @@ services:
       - "3000:80"
     depends_on:
       - backend
+    environment:
+      - VITE_S3_BASE_URL=${VITE_S3_BASE_URL}
