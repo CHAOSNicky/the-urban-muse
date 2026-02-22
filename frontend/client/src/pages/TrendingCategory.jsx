@@ -13,7 +13,7 @@ export default function TrendingCategory() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/product/get-category", {
+        const response = await fetch("/api/product/get/category", {
           credentials: "include",
         });
         if (!response.ok) throw new Error("Failed to fetch categories");

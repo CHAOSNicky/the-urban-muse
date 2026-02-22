@@ -25,31 +25,31 @@ public class ProductsController {
         this.getproductservice = getproductservice;
     }
 
-    @PostMapping("/add-product")
+    @PostMapping("/add/product")
     public ResponseEntity<?> productSave(@RequestBody ProductRequest productrequest){
 
         addproductservice.addProduct(productrequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResposne("Product added successfully"));
     }
 
-    @PostMapping("/add-category")
+    @PostMapping("/add/category")
     public ResponseEntity<?> categorySave(@RequestBody CategoryRequest categoryrequest){
         System.out.println("Request Reached the Controller");
         categoryservice.addCategory(categoryrequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResposne("Product added successfully"));
     }
 
-    @GetMapping("/by-cat/{categoryName}")
+    @GetMapping("/get/by-cat/{categoryName}")
     public ResponseEntity<List<ProductOriginalResponseDto>> getProductByCategory(@PathVariable String categoryName){
         return ResponseEntity.status(HttpStatus.OK).body(getproductservice.getProductByCategory(categoryName));
     }
 
-    @GetMapping("/by-id/{productId}")
+    @GetMapping("/get/by-id/{productId}")
     public ResponseEntity<ProductOriginalResponseDto> getSingleProduct(@PathVariable Long productId){
             return ResponseEntity.status(HttpStatus.OK).body(getproductservice.getSingleProduct(productId));
     }
 
-    @GetMapping("/get-category")
+    @GetMapping("/get/category")
     public ResponseEntity<List<CategoryResponseDto>> getAllCategory(){
         return ResponseEntity
                 .status(HttpStatus.OK)

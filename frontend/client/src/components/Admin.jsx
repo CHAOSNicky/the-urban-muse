@@ -17,7 +17,7 @@ export default function Admin() {
     }
 
     const fetchCategories = () => {
-        fetch("/api/product/get-category", {
+        fetch("/api/product/get/category", {
             credentials: "include",
         })
             .then(res => res.json())
@@ -173,7 +173,7 @@ export default function Admin() {
                     "categoryImageObjectKey": imageObjectKey
                 }
 
-                const savecat = await fetch("/api/product/add-category", {
+                const savecat = await fetch("/api/product/add/category", {
                     method: "POST",
                     credentials: "include",
                     headers: { "Content-Type": "application/json" },
@@ -264,7 +264,7 @@ export default function Admin() {
                 };
 
 
-                const saveprod = await fetch("/api/product/add-product", {
+                const saveprod = await fetch("/api/product/add/product", {
                     method: "POST",
                     credentials: "include",
                     headers: { "Content-Type": "application/json" },
