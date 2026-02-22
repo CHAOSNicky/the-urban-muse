@@ -32,12 +32,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
    // public endpoints to skip (login, signup, swagger/h2-console etc.)
    private static final List<String> EXCLUDE_URLS = List.of(
-           "/api/login/**",
-           "/api/signup/**",
-           "/api/otp/generate/**",
-            "/api/s3/**",
-            "/api/product/**"
-        //    "/h2-console"
+           "/auth/login/**",
+           "/auth/signup/**",
+           "/auth/otp/generate/**"
    );
 
    private final AntPathMatcher pathMatcher = new AntPathMatcher();
@@ -66,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
 
-       System.out.println("JwtAuthenticationFilter triggered for Authentication Path");
+       System.out.println("JwtAuthenticationFilter triggered for Authentication Path" + path);
        // 2) Extract token (prefer Authorization header, fallback to cookie named "token")
        String token = null;
        String authHeader = request.getHeader("Authorization");
@@ -74,8 +71,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
            token = authHeader.substring(7);
        } else if (request.getCookies() != null) {
            for (Cookie c : request.getCookies()) {
-               if ("token".equals(c.getName())) {
+               if ("jwt".equals(c.getName())) {
                    token = c.getValue();
+                   System.out.println("JwtAuthenticationFilter triggered for Cookie " + token);
                    break;
                }
            }

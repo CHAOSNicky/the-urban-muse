@@ -1,22 +1,22 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
-import {LoginContext} from '../Contexts/LoginContexts'
- 
+import { LoginContext } from '../Contexts/LoginContexts';
+
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [otpLoading, setOtpLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(0); // seconds
+  const [cooldown, setCooldown] = useState(0);
   const liveRef = useRef(null);
   const navigate = useNavigate();
 
   const normalizeEmail = (val) => val.trim();
   const isValidEmail = (val) => /\S+@\S+\.\S+/.test(val);
-  
-  const {setName} = useContext(LoginContext);
-  const {setLogin} = useContext(LoginContext);
+
+  const { setName } = useContext(LoginContext);
+  const { setLogin } = useContext(LoginContext);
 
   useEffect(() => {
     if (!cooldown) return;
@@ -24,10 +24,8 @@ export default function Signin() {
     return () => clearInterval(t);
   }, [cooldown]);
 
-  // small helper to announce politely to screen readers
   const announce = (text) => {
     setMessage(text);
-    // nudge aria-live to re-announce the same string
     if (liveRef.current) {
       liveRef.current.textContent = "";
       setTimeout(() => (liveRef.current.textContent = text), 10);
@@ -41,40 +39,36 @@ export default function Signin() {
       announce("❌ Please enter a valid email address.");
       return;
     }
-    if (!otp || otp.length < 4) {
-      announce("❌ Please enter the OTP sent to your email.");
+    if (!otp || otp.length < 6) {
+      announce("❌ Please enter the 6-digit OTP sent to your email.");
       return;
     }
 
     try {
       setSubmitLoading(true);
-      
-      const res = await fetch("http://localhost:8080/api/login",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {"Content-Type" : "application/json"},
-          body: JSON.stringify({"email": emailNorm,
-                                "authCode": otp})
-        }
-      );
 
-      if(!res.ok){
+      const res = await fetch("/auth/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailNorm, authCode: otp }),
+      });
+
+      if (!res.ok) {
         const data = await res.json();
         console.log(data.message);
         announce("⚠️ Login failed. Try again.");
         return;
-      }      
+      }
 
       const data = await res.json();
-      console.log(data.message)
+      console.log(data.message);
       announce("✅ Logged in successfully.");
-        setName(data.fullname);
-        setLogin(true);
-        console.log(data.fullname);
-      setTimeout(()=>{
-        navigate("/")
-      },2000);
+      setName(data.fullname);
+      setLogin(true);
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (err) {
       console.error(err);
       announce("⚠️ Login failed. Try again.");
@@ -92,18 +86,18 @@ export default function Signin() {
       }
       setOtpLoading(true);
 
-      const res = await fetch("http://localhost:8080/api/otp/generate", {
+      const res = await fetch("/auth/otp/generate", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({"email" : emailNorm})
+        body: JSON.stringify({ email: emailNorm }),
       });
 
       if (!res.ok) {
         announce("❌ OTP could not be generated.");
       } else {
         announce("✅ OTP sent to your email!");
-        setCooldown(30); // 30s resend cooldown
+        setCooldown(30);
       }
     } catch (e) {
       console.error(e);
@@ -114,17 +108,16 @@ export default function Signin() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Email */}
-      <div className="relative group">
+      <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-gray-400 mb-1.5"
         >
           Email address
         </label>
         <div className="relative">
-          {/* icon */}
           <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
             <svg
               aria-hidden="true"
@@ -134,7 +127,15 @@ export default function Signin() {
               className="opacity-70"
             >
               <path
-                d="M4 6h16a1 1 0 0 1 .8 1.6l-8 10a1 1 0 0 1-1.6 0l-8-10A1 1 0 0 1 4 6Zm0 0l8 5 8-5"
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <polyline
+                points="22,6 12,13 2,6"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"
@@ -149,17 +150,17 @@ export default function Signin() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-300 bg-white/90 text-gray-800 placeholder-gray-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 focus:border-gray-500 transition shadow-sm"
+            className="input-dark pl-10"
             placeholder="you@example.com"
           />
         </div>
       </div>
 
-      {/* OTP + Get OTP */}
+      {/* OTP */}
       <div>
         <label
           htmlFor="otp"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-gray-400 mb-1.5"
         >
           One-Time Passcode
         </label>
@@ -168,9 +169,9 @@ export default function Signin() {
             id="otp"
             inputMode="numeric"
             pattern="[0-9]*"
+            maxLength={6}
             value={otp}
             onChange={(e) => {
-              // keep only digits, max 6
               const v = e.target.value.replace(/\D/g, "").slice(0, 6);
               setOtp(v);
             }}
@@ -183,24 +184,22 @@ export default function Signin() {
                 setOtp(v);
               }
             }}
-            className="flex-1 tracking-widest tabular-nums px-3 py-2 rounded-xl border border-gray-300 bg-white/90 text-gray-800 placeholder-gray-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 focus:border-gray-500 transition shadow-sm text-center font-semibold"
-            placeholder="••••••"
+            className="input-dark flex-1 tracking-[0.35em] tabular-nums text-center font-semibold text-lg"
+            placeholder="• • • • • •"
             aria-describedby="otp-help"
           />
           <button
             type="button"
             onClick={otpCall}
             disabled={otpLoading || cooldown > 0}
-            className={`px-4 py-2 rounded-xl font-semibold text-white shadow-sm transition
-              ${otpLoading || cooldown > 0
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-neutral-700 to-neutral-800 hover:from-neutral-800 hover:to-neutral-900"
+            className={`px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 whitespace-nowrap ${otpLoading || cooldown > 0
+              ? "bg-white/[0.06] text-gray-600 cursor-not-allowed border border-white/[0.06]"
+              : "bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-600/30 hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/10 active:scale-95"
               }`}
           >
             {otpLoading ? (
               <span className="inline-flex items-center gap-2">
-                <Spinner />
-                Sending
+                <Spinner /> Sending
               </span>
             ) : cooldown > 0 ? (
               `Resend ${cooldown}s`
@@ -209,7 +208,7 @@ export default function Signin() {
             )}
           </button>
         </div>
-        <p id="otp-help" className="mt-1 text-xs text-gray-600">
+        <p id="otp-help" className="mt-1.5 text-xs text-gray-600">
           Check your inbox (and spam folder). OTP expires quickly.
         </p>
       </div>
@@ -218,10 +217,9 @@ export default function Signin() {
       <button
         type="submit"
         disabled={submitLoading}
-        className={`w-full rounded-xl py-2.5 font-semibold text-white shadow-md transition
-          ${submitLoading
-            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-            : "bg-gradient-to-r from-neutral-700 to-neutral-800 hover:from-neutral-800 hover:to-neutral-900"
+        className={`w-full rounded-xl py-3 font-semibold text-sm tracking-wide transition-all duration-300 ${submitLoading
+          ? "bg-white/[0.06] text-gray-600 cursor-not-allowed"
+          : "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:brightness-110 active:scale-[0.98]"
           }`}
       >
         {submitLoading ? (
@@ -233,14 +231,16 @@ export default function Signin() {
         )}
       </button>
 
-      {/* Feedback (ARIA live for SRs, looks like a toast inline) */}
+      {/* Feedback */}
       <p
         ref={liveRef}
         aria-live="polite"
-        className={`min-h-[1.25rem] text-center text-sm mt-1
-          ${message.startsWith("✅") ? "text-green-600" :
-            message.startsWith("❌") ? "text-red-600" :
-            "text-gray-600"}`}
+        className={`min-h-[1.25rem] text-center text-sm mt-1 transition-colors duration-300 ${message.startsWith("✅")
+          ? "text-emerald-400"
+          : message.startsWith("❌")
+            ? "text-red-400"
+            : "text-amber-400"
+          }`}
       >
         {message}
       </p>
@@ -248,7 +248,7 @@ export default function Signin() {
   );
 }
 
-/* Tiny inline spinner—no extra deps */
+/* Tiny inline spinner */
 function Spinner() {
   return (
     <svg

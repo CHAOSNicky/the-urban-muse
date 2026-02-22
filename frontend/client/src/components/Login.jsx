@@ -7,12 +7,17 @@ export default function Login() {
   const [active, setActive] = useState("login");
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-neutral-100 via-neutral-50 to-white relative overflow-hidden">
-      <div className="fixed top-7 left-7 z-50 cursor-pointer hover:opacity-80 text-gray-700">
-        <Link to="/" aria-label="Go To MainPage">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#0f1117] relative overflow-hidden px-4">
+      {/* Back arrow */}
+      <div className="fixed top-7 left-7 z-50">
+        <Link
+          to="/"
+          aria-label="Go To MainPage"
+          className="group flex items-center justify-center w-10 h-10 rounded-full bg-white/[0.06] border border-white/[0.1] text-gray-400 hover:text-white hover:border-indigo-500/50 hover:bg-indigo-500/10 transition-all duration-300"
+        >
           <svg
-            width="35"
-            height="35"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -25,33 +30,34 @@ export default function Login() {
         </Link>
       </div>
 
-      {/* Decorative background blur circles (soft, light) */}
-      <div className="absolute -top-20 -left-20 w-72 h-72 bg-neutral-300 rounded-full blur-3xl opacity-30 animate-pulse" />
-      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-neutral-200 rounded-full blur-3xl opacity-30 animate-pulse" />
+      {/* Ambient glow blobs */}
+      <div className="absolute top-[-15%] left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-600/15 blur-[120px] animate-float" />
+      <div className="absolute bottom-[-15%] right-[-10%] w-[450px] h-[450px] rounded-full bg-violet-600/10 blur-[120px] animate-float-delayed" />
+      <div className="absolute top-[40%] left-[50%] w-[300px] h-[300px] rounded-full bg-blue-600/[0.07] blur-[100px] animate-float" />
 
       <div className="w-full max-w-md z-10">
         {/* Tab switcher */}
         <div
-          className="relative flex w-full rounded-2xl bg-white/80 backdrop-blur p-1 shadow-md border border-gray-200"
+          className="relative flex w-full rounded-2xl glass-card p-1.5"
           role="tablist"
           aria-label="Auth tabs"
         >
           {/* Sliding pill */}
           <div
-            className={`absolute inset-y-1 left-1 w-1/2 rounded-xl bg-gradient-to-r from-neutral-500 to-neutral-400 shadow transform transition-transform duration-500 ease-in-out ${active === "login" ? "translate-x-0" : "translate-x-full"
+            className={`absolute inset-y-1.5 left-1.5 w-[calc(50%-6px)] rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-500/25 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${active === "login" ? "translate-x-0" : "translate-x-[calc(100%+6px)]"
               }`}
             aria-hidden="true"
           />
 
-          {/* Buttons */}
+          {/* Tab buttons */}
           <button
             type="button"
             role="tab"
             aria-selected={active === "login"}
             onClick={() => setActive("login")}
-            className={`relative z-10 flex-1 py-2 text-sm font-semibold rounded-xl transition-colors duration-300 ${active === "login"
+            className={`relative z-10 flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 ${active === "login"
                 ? "text-white"
-                : "text-gray-700 hover:text-gray-900"
+                : "text-gray-500 hover:text-gray-300"
               }`}
           >
             LOGIN
@@ -61,33 +67,40 @@ export default function Login() {
             role="tab"
             aria-selected={active === "signup"}
             onClick={() => setActive("signup")}
-            className={`relative z-10 flex-1 py-2 text-sm font-semibold rounded-xl transition-colors duration-300 ${active === "signup"
+            className={`relative z-10 flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 ${active === "signup"
                 ? "text-white"
-                : "text-gray-700 hover:text-gray-900"
+                : "text-gray-500 hover:text-gray-300"
               }`}
           >
             SIGNUP
           </button>
         </div>
 
-        {/* Form container */}
-        <div className="bg-white/90 backdrop-blur mt-6 rounded-2xl shadow-xl p-8 border border-gray-200 transition-transform transform hover:scale-[1.02] duration-300">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+        {/* Form card */}
+        <div className="glass-card mt-6 rounded-2xl p-8">
+          <h2 className="text-2xl font-bold text-center text-gray-100 mb-6">
             {active === "login" ? "Welcome Back 👋" : "Create Your Account 🚀"}
           </h2>
-          <div
-            className={`transition-opacity duration-500 ${active === "login" ? "opacity-100" : "opacity-0 absolute"
-              }`}
-          >
-            {active === "login" && <Signin />}
-          </div>
-          <div
-            className={`transition-opacity duration-500 ${active === "signup" ? "opacity-100" : "opacity-0 absolute"
-              }`}
-          >
-            {active === "signup" && <Signup />}
+
+          {/* Fade-animate forms; min-h prevents layout shift */}
+          <div className="relative min-h-[280px]">
+            {active === "login" && (
+              <div key="login" className="animate-fadeIn">
+                <Signin />
+              </div>
+            )}
+            {active === "signup" && (
+              <div key="signup" className="animate-fadeIn">
+                <Signup />
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-gray-600 mt-6">
+          By continuing, you agree to our Terms of Service and Privacy Policy.
+        </p>
       </div>
     </div>
   );

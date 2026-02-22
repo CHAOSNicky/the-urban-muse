@@ -2,6 +2,8 @@ package com.practice.loginwebapp.util;
 
 import java.sql.Date;
 
+import com.practice.loginwebapp.dtos.Signin;
+import com.practice.loginwebapp.models.Account;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 // import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,20 +22,24 @@ public class JwtUtil {
     @Value("${app.jwt.expiration}")
     private long expiration;
 
-    public String generateToken(String username) {
-    
-       return Jwts.builder()
-               .setSubject(username)
-               .setIssuedAt(new Date(System.currentTimeMillis()))
-               .setExpiration(new Date(System.currentTimeMillis() + expiration))
-               .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
-               .compact();
+    public String generateToken(Account acc) {
+        return Jwts.builder()
+                .setSubject(acc.getEmail())
+                .claim("role", acc.getRole().name())
+                .setIssuedAt(new Date(
+                        System.currentTimeMillis())
+                )
+                .setExpiration(new Date(
+                        System.currentTimeMillis() + expiration)
+                )
+                .signWith(
+                        Keys.hmacShaKeyFor(secret.getBytes()),
+                        SignatureAlgorithm.HS256
+                )
+                .compact();
     }
-
-
     
     public String extractUsername(String token) {
-
        return Jwts.parserBuilder()
                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
                .build()

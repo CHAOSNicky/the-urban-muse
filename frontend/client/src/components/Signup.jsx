@@ -8,7 +8,7 @@ export default function Signup() {
   const [message, setMessage] = useState("");
   const [otpLoading, setOtpLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [cooldown, setCooldown] = useState(0); // seconds
+  const [cooldown, setCooldown] = useState(0);
 
   const liveRef = useRef(null);
 
@@ -21,7 +21,6 @@ export default function Signup() {
     return () => clearInterval(t);
   }, [cooldown]);
 
-  // Announce helper (for screen readers + inline feedback)
   const announce = (text) => {
     setMessage(text);
     if (liveRef.current) {
@@ -44,30 +43,30 @@ export default function Signup() {
       return;
     }
     if (!otp || otp.length < 6) {
-      announce("❌ Please enter the OTP sent to your email.");
+      announce("❌ Please enter the 6-digit OTP sent to your email.");
       return;
     }
 
     setSubmitLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/signup",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {"Content-Type" : "application/json"},
-          body: JSON.stringify({"fullName": name,
-                                "email": emailNorm,
-                                "authCode": otp}
-          )
-        }
-      )
+      const res = await fetch("/auth/signup", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: name,
+          email: emailNorm,
+          authCode: otp,
+        }),
+      });
 
-      if(!res.ok){
-        try{
-          const data = await res.JSON();
+      if (!res.ok) {
+        try {
+          const data = await res.json();
+        } catch {
+          /* no-op */
         }
-        catch{  }
         announce("⚠️ Signup Failed");
         return;
       }
@@ -81,7 +80,6 @@ export default function Signup() {
     }
   };
 
-
   async function otpCall() {
     try {
       const emailNorm = normalizeEmail(email);
@@ -91,19 +89,18 @@ export default function Signup() {
       }
       setOtpLoading(true);
 
-      const res = await fetch("http://localhost:8080/api/otp/generate", {
+      const res = await fetch("/auth/otp/generate", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({"fullName" : name,
-                              "email": emailNorm }),
+        body: JSON.stringify({ fullName: name, email: emailNorm }),
       });
 
       if (!res.ok) {
         announce("❌ OTP could not be generated.");
       } else {
         announce("✅ OTP sent to your email!");
-        setCooldown(30); // 30s resend cooldown
+        setCooldown(30);
       }
     } catch (e) {
       console.error(e);
@@ -114,26 +111,39 @@ export default function Signup() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Section 1: Name */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+        <p className="text-[11px] font-semibold text-indigo-400/70 uppercase tracking-widest mb-2">
           Name
-        </h3>
-        <div className="relative group">
+        </p>
+        <div>
           <label
             htmlFor="signup-name"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-400 mb-1.5"
           >
             Full name
           </label>
           <div className="relative">
             <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-              {/* user icon */}
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" className="opacity-70">
                 <path
-                  d="M12 12c2.7 0 4.5-2.2 4.5-5S14.7 2 12 2 7.5 4.2 7.5 7s1.8 5 4.5 5zm0 2c-3 0-9 1.5-9 4.5V22h18v-3.5c0-3-6-4.5-9-4.5z"
-                  fill="currentColor"
+                  d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="7"
+                  r="4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </span>
@@ -142,7 +152,7 @@ export default function Signup() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-300 bg-white/90 text-gray-800 placeholder-gray-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 focus:border-gray-500 transition shadow-sm"
+              className="input-dark pl-10"
               placeholder="John Doe"
             />
           </div>
@@ -151,22 +161,29 @@ export default function Signup() {
 
       {/* Section 2: Email */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+        <p className="text-[11px] font-semibold text-indigo-400/70 uppercase tracking-widest mb-2">
           Email
-        </h3>
-        <div className="relative group">
+        </p>
+        <div>
           <label
             htmlFor="signup-email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-400 mb-1.5"
           >
             Email address
           </label>
           <div className="relative">
             <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-              {/* mail icon */}
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" className="opacity-70">
                 <path
-                  d="M4 6h16a1 1 0 0 1 .8 1.6l-8 10a1 1 0 0 1-1.6 0l-8-10A1 1 0 0 1 4 6Zm0 0l8 5 8-5"
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <polyline
+                  points="22,6 12,13 2,6"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="1.5"
@@ -181,7 +198,7 @@ export default function Signup() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 rounded-xl border border-gray-300 bg-white/90 text-gray-800 placeholder-gray-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 focus:border-gray-500 transition shadow-sm"
+              className="input-dark pl-10"
               placeholder="you@example.com"
             />
           </div>
@@ -190,10 +207,10 @@ export default function Signup() {
 
       {/* Section 3: OTP */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+        <p className="text-[11px] font-semibold text-indigo-400/70 uppercase tracking-widest mb-2">
           Verification
-        </h3>
-        <label htmlFor="signup-otp" className="block text-sm font-medium text-gray-700 mb-1">
+        </p>
+        <label htmlFor="signup-otp" className="block text-sm font-medium text-gray-400 mb-1.5">
           One-Time Passcode
         </label>
         <div className="flex items-stretch gap-2">
@@ -201,9 +218,10 @@ export default function Signup() {
             id="signup-otp"
             inputMode="numeric"
             pattern="[0-9]*"
+            maxLength={6}
             value={otp}
             onChange={(e) => {
-              const v = e.target.value.replace(/\D/g, "").slice(0, 6); // digits only, max 6
+              const v = e.target.value.replace(/\D/g, "").slice(0, 6);
               setOtp(v);
             }}
             onPaste={(e) => {
@@ -213,24 +231,22 @@ export default function Signup() {
                 setOtp(v);
               }
             }}
-            className="flex-1 tracking-widest tabular-nums px-3 py-2 rounded-xl border border-gray-300 bg-white/90 text-gray-800 placeholder-gray-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 focus:border-gray-500 transition shadow-sm text-center font-semibold"
-            placeholder="••••••"
+            className="input-dark flex-1 tracking-[0.35em] tabular-nums text-center font-semibold text-lg"
+            placeholder="• • • • • •"
             aria-describedby="signup-otp-help"
           />
           <button
             type="button"
             onClick={otpCall}
             disabled={otpLoading || cooldown > 0}
-            className={`px-4 py-2 rounded-xl font-semibold text-white shadow-sm transition
-              ${otpLoading || cooldown > 0
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-neutral-700 to-neutral-800 hover:from-neutral-800 hover:to-neutral-900"
+            className={`px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 whitespace-nowrap ${otpLoading || cooldown > 0
+              ? "bg-white/[0.06] text-gray-600 cursor-not-allowed border border-white/[0.06]"
+              : "bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-600/30 hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/10 active:scale-95"
               }`}
           >
             {otpLoading ? (
               <span className="inline-flex items-center gap-2">
-                <Spinner />
-                Sending
+                <Spinner /> Sending
               </span>
             ) : cooldown > 0 ? (
               `Resend ${cooldown}s`
@@ -239,8 +255,8 @@ export default function Signup() {
             )}
           </button>
         </div>
-        <p id="signup-otp-help" className="mt-1 text-xs text-gray-600">
-          We’ll send a code to verify your email.
+        <p id="signup-otp-help" className="mt-1.5 text-xs text-gray-600">
+          We'll send a code to verify your email.
         </p>
       </div>
 
@@ -248,10 +264,9 @@ export default function Signup() {
       <button
         type="submit"
         disabled={submitLoading}
-        className={`w-full rounded-xl py-2.5 font-semibold text-white shadow-md transition
-          ${submitLoading
-            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-            : "bg-gradient-to-r from-neutral-700 to-neutral-800 hover:from-neutral-800 hover:to-neutral-900"
+        className={`w-full rounded-xl py-3 font-semibold text-sm tracking-wide transition-all duration-300 ${submitLoading
+          ? "bg-white/[0.06] text-gray-600 cursor-not-allowed"
+          : "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:brightness-110 active:scale-[0.98]"
           }`}
       >
         {submitLoading ? (
@@ -263,14 +278,16 @@ export default function Signup() {
         )}
       </button>
 
-      {/* Feedback (ARIA live) */}
+      {/* Feedback */}
       <p
         ref={liveRef}
         aria-live="polite"
-        className={`min-h-[1.25rem] text-center text-sm mt-1
-          ${message.startsWith("✅") ? "text-green-600" :
-            message.startsWith("❌") ? "text-red-600" :
-            "text-gray-600"}`}
+        className={`min-h-[1.25rem] text-center text-sm mt-1 transition-colors duration-300 ${message.startsWith("✅")
+          ? "text-emerald-400"
+          : message.startsWith("❌")
+            ? "text-red-400"
+            : "text-amber-400"
+          }`}
       >
         {message}
       </p>
@@ -278,7 +295,7 @@ export default function Signup() {
   );
 }
 
-/* Tiny inline spinner—no extra deps */
+/* Tiny inline spinner */
 function Spinner() {
   return (
     <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">

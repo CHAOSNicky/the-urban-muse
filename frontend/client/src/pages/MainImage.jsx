@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { ShoppingCartIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import promoImage from '../assets/photo-1567401893414-76b7b1e5a7a5.jpeg';
-import { Link, useLocation } from 'react-router-dom';
-import {LoginContext} from '../Contexts/LoginContexts'
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { LoginContext } from '../Contexts/LoginContexts'
 
 function MainImage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const {name, login, setLogin, setName} = useContext(LoginContext);
+  const { name, login, logout, role } = useContext(LoginContext);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Close the mobile menu when route changes
   useEffect(() => setMobileOpen(false), [location.pathname]);
@@ -53,25 +54,7 @@ function MainImage() {
     }
   }, []);
 
-  const removeUser = async (e) =>{
-    const res = await fetch("http://localhost:8080/api/logout",{
-      method: "GET",
-      credentials: "include",
-      headers: {"Content-Type" : "application/json"},
-    });
 
-    if(!res){
-      // alert("Server did not reach");
-      console.log("LOGOUT Failed");
-      return;
-    }
-    setLogin(false);
-    setName("");
-    localStorage.setItem("login", JSON.stringify(false));
-    localStorage.removeItem("name");
-    const data = await res.json();
-    console.log(data.message);
-  }
 
   return (
     <div className="relative">
@@ -80,7 +63,7 @@ function MainImage() {
         <div className="h-14 sm:h-[60px] px-4 sm:px-6 bg-[#edeaf5]/90 backdrop-blur supports-[backdrop-filter]:bg-[#edeaf5]/40">
           <div className="h-full flex items-center">
             {/* Left: Brand + Mobile hamburger */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 text-black">
               <button
                 className="lg:hidden p-2 -ml-2 rounded-xl focus:outline-none focus:ring"
                 aria-label="Toggle menu"
@@ -92,16 +75,16 @@ function MainImage() {
               </button>
               <div className="flex-col">
                 <div className="pl-1 sm:pl-2 text-xl sm:text-2xl font-semibold tracking-wide cursor-pointer ">
-                THE URBAN MUSE
-              </div>
+                  THE URBAN MUSE
+                </div>
                 <div className="pl-1 sm:pl-2 text-sm sm:text-md tracking-wide">
-                Welcome {name}
+                  Welcome {name}
                 </div>
               </div>
             </div>
 
             {/* Center: Desktop links */}
-            <nav className="hidden lg:flex flex-1 items-center justify-center gap-10 text-base">
+            <nav className="hidden lg:flex flex-1 items-center justify-center gap-10 text-base text-black">
               <Link to="/new" className="">NEW ARRIVALS</Link>
               <Link to="/contact" className="">CONTACT</Link>
               <Link to="/about" className="">ABOUT</Link>
@@ -112,8 +95,17 @@ function MainImage() {
             */}
             <div className="ml-auto flex items-center gap-4 sm:gap-6" ref={menuRef}>
               <div className="relative"> {/* make this relative so absolute dropdown is positioned correctly */}
-                <button onClick={() => setOpen(prev => !prev)} className="p-1 rounded-md">
-                  <UserIcon className="h-6 w-6 hidden lg:block"/>
+                <button
+                  onClick={() => {
+                    if (!login) {
+                      navigate('/login');
+                    } else {
+                      setOpen(prev => !prev);
+                    }
+                  }}
+                  className="p-1 rounded-md text-black"
+                >
+                  <UserIcon className="h-6 w-6 hidden lg:block" />
                 </button>
 
                 {/* Render dropdown only when open and only on lg+ (Tailwind classes hide it automatically on small screens) */}
@@ -128,36 +120,37 @@ function MainImage() {
                               ">
                     {login ? (
                       <div className="text-sm sm:text-base px-4 py-2 ">
-                        <button onClick={() => { removeUser(); setOpen(false); }} className="w-full text-white text-sm sm:text-base px-4 py-2 my-1
-          hover:backdrop-blur-md
-          border border-transparent
-          rounded-lg">
+                        {role === "ADMIN" && (
+                          <Link to="/admin" onClick={() => setOpen(false)} className="block text-white/70 text-sm sm:text-base px-4 py-2 mb-1
+                            hover:backdrop-blur-md
+                            border border-transparent
+                            rounded-lg">
+                            ADMIN
+                          </Link>
+                        )}
+                        <button onClick={() => { logout(); setOpen(false); }} className="w-full text-white text-sm sm:text-base px-4 py-2 my-1
+                          hover:backdrop-blur-md
+                          border border-transparent
+                          rounded-lg">
                           LOGOUT
                         </button>
                       </div>
                     ) : (
                       <Link to="/login" onClick={() => setOpen(false)} className="block text-white/70 text-sm sm:text-base px-4 py-2
-          hover:backdrop-blur-md
-          border border-transparent
-          rounded-lg">
+                        hover:backdrop-blur-md
+                        border border-transparent
+                        rounded-lg">
                         LOGIN / SIGNUP
                       </Link>
                     )}
-                    <Link to="/admin" onClick={() => setOpen(false)} className=" block text-white/70 text-sm sm:text-base px-4 py-2
-        
-         hover:backdrop-blur-md
-        border border-transparent
-        rounded-lg">
-                      ADMIN
-                    </Link>
                   </div>
                 )}
               </div>
 
-              <button className="p-1" aria-label="Search">
+              <button className="p-1 text-black" aria-label="Search">
                 <MagnifyingGlassIcon className="h-6 w-6 sm:h-7 sm:w-7" />
               </button>
-              <button className="p-1" aria-label="Cart">
+              <button className="p-1 text-black" aria-label="Cart">
                 <ShoppingCartIcon className="h-6 w-6 sm:h-7 sm:w-7" />
               </button>
             </div>
@@ -167,20 +160,20 @@ function MainImage() {
         {/* Mobile slide-down menu */}
         <div
           id="mobile-nav"
-          className={`lg:hidden origin-top overflow-hidden transition-[max-height] duration-300 ease-out bg-[#edeaf5]/95 backdrop-blur
+          className={`lg:hidden origin-top overflow-hidden transition-[max-height] duration-300 ease-out bg-[#edeaf5]/95 backdrop-blur text-black
           ${mobileOpen ? 'max-h-64' : 'max-h-0'}`}
         >
           <div className="px-4 py-3 flex flex-col gap-2 text-base">
             <Link to="/new" className="py-2">NEW ARRIVALS</Link>
             <Link to="/contact" className="py-2">CONTACT</Link>
             <Link to="/about" className="py-2">ABOUT</Link>
-            {login? (<div className="py-2 flex items-center gap-2">
-                      <button onClick={removeUser} className="w-5 h-5" > LOGOUT </button>
-                    </div>) 
-            : <Link to="/login" className="py-2 flex items-center gap-2">
-              <button className="" > LOGIN / SIGNUP </button>
-            </Link>}
-            <Link to="/admin" className="py-2">ADMIN</Link>
+            {login ? (<div className="py-2 flex items-center gap-2">
+              <button onClick={logout} className="w-5 h-5" > LOGOUT </button>
+            </div>)
+              : <Link to="/login" className="py-2 flex items-center gap-2">
+                <button className="" > LOGIN / SIGNUP </button>
+              </Link>}
+            {role === "ADMIN" && <Link to="/admin" className="py-2">ADMIN</Link>}
           </div>
         </div>
       </div>

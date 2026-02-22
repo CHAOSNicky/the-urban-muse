@@ -13,7 +13,9 @@ export default function TrendingCategory() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/product/get-category");
+        const response = await fetch("/api/product/get-category", {
+          credentials: "include",
+        });
         if (!response.ok) throw new Error("Failed to fetch categories");
 
         const data = await response.json();
@@ -67,13 +69,13 @@ export default function TrendingCategory() {
 
   return (
     <section className="bg-[#edeaf5] py-12">
-      <h2 className="text-4xl text-center font-medium mb-8">
+      <h2 className="text-4xl text-center text-black font-medium mb-8">
         TRENDING CATEGORIES 👇
       </h2>
 
       <div
         ref={containerRef}
-        className="px-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+        className="px-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide text-black"
       >
         <div className="flex gap-1 px-6 py-2 pr-20 whitespace-nowrap">
           {categories.map((c) => (
@@ -87,7 +89,7 @@ export default function TrendingCategory() {
                   alt={c.label}
                   loading="lazy"
                   className="w-full h-full object-cover transition duration-500 hover:scale-110"
-                  
+
                   onError={(e) => {
                     e.currentTarget.src = "/fallback.png";
                   }}

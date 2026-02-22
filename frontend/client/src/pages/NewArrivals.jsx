@@ -33,33 +33,33 @@ const trendingCategories = [
 function NewArrivals() {
   return (
     <div className="bg-[#edeaf5] py-12">
-      
-      <h2 className="text-4xl text-center font-medium font-sans mb-11">🎉 NEW ARRIVALS</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 px-8">
+      <h2 className="text-4xl text-center text-black font-medium font-sans mb-11">🎉 NEW ARRIVALS</h2>
+
+      <div className=" text-black grid grid-cols-2 md:grid-cols-4 gap-6 px-8">
         {trendingCategories.map((item, index) => (
           <div
             key={index}
             className="bg-[#edeaf5] overflow-hidden flex flex-col relative"
-            
+
           >
             {/* Image swap on hover */}
             <div className="h-[85%] relative w-full overflow-hidden group">
-                {/* Cart Button */}
-                <div className="absolute bottom-3 right-3 z-10 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
-                    <button className="bg-white flex items-center rounded w-10 hover:w-32 overflow-hidden transition-all duration-500 ease-in-out group/cart px-2 py-1 shadow-md">
-                        <ShoppingCartIcon className="h-6 w-6 text-black flex-shrink-0" />
-                        <span className="ml-2 whitespace-nowrap text-sm text-black opacity-0 translate-x-4 group-hover/cart:opacity-100 group-hover/cart:translate-x-0 transition-all duration-500 ease-in-out">
-                        QUICK BUY
-                        </span>
-                    </button>
-                </div>
+              {/* Cart Button */}
+              <div className="absolute bottom-3 right-3 z-10 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                <button className="bg-white flex items-center rounded w-10 hover:w-32 overflow-hidden transition-all duration-500 ease-in-out group/cart px-2 py-1 shadow-md">
+                  <ShoppingCartIcon className="h-6 w-6 text-black flex-shrink-0" />
+                  <span className="ml-2 whitespace-nowrap text-sm text-black opacity-0 translate-x-4 group-hover/cart:opacity-100 group-hover/cart:translate-x-0 transition-all duration-500 ease-in-out">
+                    QUICK BUY
+                  </span>
+                </button>
+              </div>
 
-                {/* Sliding Images */}
-                <div className="flex w-[200%] h-full transition-transform duration-500 group-hover:-translate-x-1/2">
-                    <img src={item.img1} alt="img1" className="w-1/2 h-full object-cover" />
-                    <img src={item.img2} alt="img2" className="w-1/2 h-full object-cover" />
-                </div>
+              {/* Sliding Images */}
+              <div className="flex w-[200%] h-full transition-transform duration-500 group-hover:-translate-x-1/2">
+                <img src={item.img1} alt="img1" className="w-1/2 h-full object-cover" />
+                <img src={item.img2} alt="img2" className="w-1/2 h-full object-cover" />
+              </div>
             </div>
 
 

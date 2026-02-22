@@ -12,7 +12,7 @@ import com.practice.loginwebapp.services.OtpService;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/otp")
+@RequestMapping("/auth/otp")
 public class OtpController {
 
     @Autowired
@@ -29,7 +29,7 @@ public class OtpController {
             Optional<Account> name = loginrepo.findByEmail(otp.getEmail());
             otp.setFullName(name.get().getFullName());
         }
-
+        System.out.println("Generating OTP for "+ otp.getFullName());
         String subject = "THE URBAN MUSE | Authentication";
         String body = "Hello "+ otp.getFullName() + "\n" +"Welcome to THE URBAN MUSE\n" + "Your Authentication Code is : ";
         return ResponseEntity.ok(otpservice.sendMail(otp.getEmail(), subject, body));
