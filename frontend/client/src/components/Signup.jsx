@@ -1,10 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
+import API_BASE_URL from "../Constants/CommonConst";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { LoginContext } from "../Contexts/LoginContexts";
 
 export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-
+  const navigate = useNavigate();
+  const { verifyAuth } = useContext(LoginContext);
   const [message, setMessage] = useState("");
   const [otpLoading, setOtpLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -50,7 +55,7 @@ export default function Signup() {
     setSubmitLoading(true);
 
     try {
-      const res = await fetch("/auth/signup", {
+      const res = await fetch(API_BASE_URL + "/auth/signup", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -71,7 +76,26 @@ export default function Signup() {
         return;
       }
 
-      announce("✅ Account created! Redirecting...");
+      // announce("✅ Account created! Redirecting...");
+      announce("✅ Account created! Logging you in...");
+
+      const loginRes = await fetch(API_BASE_URL + "/auth/login", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: emailNorm,
+          authCode: otp,
+        }),
+      });
+
+      if (!loginRes.ok) {
+        announce("⚠️ Signup succeeded, but auto-login failed.");
+        return;
+      }
+
+      await verifyAuth();
+      navigate("/");
     } catch (err) {
       console.error(err);
       announce("⚠️ Signup failed. Try again.");
@@ -89,7 +113,7 @@ export default function Signup() {
       }
       setOtpLoading(true);
 
-      const res = await fetch("/auth/otp/generate", {
+      const res = await fetch(API_BASE_URL + "/auth/otp/generate", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

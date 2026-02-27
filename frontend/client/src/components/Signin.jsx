@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../Contexts/LoginContexts';
+import API_BASE_URL from "../Constants/CommonConst";
 
 export default function Signin() {
   const [email, setEmail] = useState("");
@@ -47,7 +48,7 @@ export default function Signin() {
     try {
       setSubmitLoading(true);
 
-      const res = await fetch("/auth/login", {
+      const res = await fetch(API_BASE_URL + "/auth/login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -86,7 +87,7 @@ export default function Signin() {
       }
       setOtpLoading(true);
 
-      const res = await fetch("/auth/otp/generate", {
+      const res = await fetch(API_BASE_URL + "/auth/otp/generate", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },

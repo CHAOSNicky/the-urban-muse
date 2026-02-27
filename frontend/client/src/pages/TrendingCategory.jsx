@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../trendingcategory.css";
+import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../Constants/CommonConst";
 
 export default function TrendingCategory() {
   const containerRef = useRef(null);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
 
@@ -13,7 +16,7 @@ export default function TrendingCategory() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/api/product/get/category", {
+        const response = await fetch(API_BASE_URL + "/api/product/get/category", {
           credentials: "include",
         });
         if (!response.ok) throw new Error("Failed to fetch categories");
@@ -81,6 +84,7 @@ export default function TrendingCategory() {
           {categories.map((c) => (
             <article
               key={c.id}
+              onClick={() => navigate(`/category/${c.label.toLowerCase()}`)}
               className="reveal-item snap-start flex-none w-64 md:w-72 lg:w-80 inline-flex flex-col items-center cursor-pointer"
             >
               <div className="w-full aspect-[3/4] m-5 overflow-hidden rounded-lg">

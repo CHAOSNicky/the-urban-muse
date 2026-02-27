@@ -1,10 +1,12 @@
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { LoginContext } from '../Contexts/LoginContexts';
+import API_BASE_URL from "../Constants/CommonConst";
 
 export default function Admin() {
     const { login, role, loading } = useContext(LoginContext);
     const navigate = useNavigate();
+    const [productSaved, setProductSaved] = useState(false);
 
     useEffect(() => {
         if (!loading && (!login || role !== "ADMIN")) {
@@ -17,7 +19,7 @@ export default function Admin() {
     }
 
     const fetchCategories = () => {
-        fetch("/api/product/get/category", {
+        fetch(API_BASE_URL + "/api/product/get/category", {
             credentials: "include",
         })
             .then(res => res.json())
@@ -134,7 +136,7 @@ export default function Admin() {
                 size: file.size
             }));
 
-            const res = await fetch("/api/s3/pre-signed-put-url", {
+            const res = await fetch(API_BASE_URL + "/api/s3/pre-signed-put-url", {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
@@ -173,7 +175,7 @@ export default function Admin() {
                     "categoryImageObjectKey": imageObjectKey
                 }
 
-                const savecat = await fetch("/api/product/add/category", {
+                const savecat = await fetch(API_BASE_URL + "/api/product/add/category", {
                     method: "POST",
                     credentials: "include",
                     headers: { "Content-Type": "application/json" },
@@ -209,6 +211,8 @@ export default function Admin() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        setProductSaved(false);
+        setSubmitting(true);
 
         try {
             const requestBody = images.map(file => ({
@@ -217,7 +221,7 @@ export default function Admin() {
                 size: file.size
             }));
 
-            const res = await fetch("/api/s3/pre-signed-put-url", {
+            const res = await fetch(API_BASE_URL + "/api/s3/pre-signed-put-url", {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
@@ -264,7 +268,7 @@ export default function Admin() {
                 };
 
 
-                const saveprod = await fetch("/api/product/add/product", {
+                const saveprod = await fetch(API_BASE_URL + "/api/product/add/product", {
                     method: "POST",
                     credentials: "include",
                     headers: { "Content-Type": "application/json" },
@@ -276,7 +280,8 @@ export default function Admin() {
                     return;
                 }
 
-                const result = saveprod.json();
+                await saveprod.json();
+                setProductSaved(true);
                 console.log("Product Saved Successfully ✅");
 
             }
@@ -580,6 +585,11 @@ export default function Admin() {
                         >
                             {submitting ? "Saving..." : "Save Product"}
                         </button>
+                        {productSaved && (
+                            <p className="mt-3 text-green-700 font-medium text-center">
+                                Product saved successfully ✅
+                            </p>
+                        )}
                     </div>
                 </form>
             </div>

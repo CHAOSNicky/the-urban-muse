@@ -51,8 +51,8 @@ public class LoginConfig {
             .authorizeHttpRequests(auth -> auth
 
                     .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                    .requestMatchers("/api/product/add/*", "/api/s3/**").hasRole("ADMIN")
-                    .requestMatchers("/auth/signup/**","/auth/login/**", "/auth/otp/generate/**", "/api/product/get/*").permitAll()
+                    .requestMatchers("/api/product/add/**", "/api/s3/**").hasRole("ADMIN")
+                    .requestMatchers("/auth/signup/**","/auth/login/**", "/auth/otp/generate/**", "/api/product/get/**").permitAll()
                     .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

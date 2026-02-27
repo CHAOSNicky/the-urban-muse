@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useCallback } from "react";
+import API_BASE_URL from "../Constants/CommonConst";
 
 export const LoginContext = createContext();
 
@@ -11,7 +12,7 @@ export function LoginProvider({ children }) {
     // ── Verify auth against the server (cookie-based) ──────────────
     const verifyAuth = useCallback(async () => {
         try {
-            const res = await fetch("/auth/me", {
+            const res = await fetch(API_BASE_URL + "/auth/me", {
                 method: "GET",
                 credentials: "include",
             });
@@ -79,7 +80,7 @@ export function LoginProvider({ children }) {
 
     return (
         <LoginContext.Provider
-            value={{ name, setName, role, setRole, login, setLogin, loading, logout }}
+            value={{ name, setName, role, setRole, login, setLogin, loading, logout, verifyAuth }}
         >
             {children}
         </LoginContext.Provider>
