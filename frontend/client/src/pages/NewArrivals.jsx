@@ -44,7 +44,7 @@ function NewArrivals() {
 
           >
             {/* Image swap on hover */}
-            <div className="h-[85%] relative w-full overflow-hidden group">
+            <div className="h-[85%] relative w-full overflow-hidden group rounded-lg">
               {/* Cart Button */}
               <div className="absolute bottom-3 right-3 z-10 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
                 <button className="bg-white flex items-center rounded w-10 hover:w-32 overflow-hidden transition-all duration-500 ease-in-out group/cart px-2 py-1 shadow-md">

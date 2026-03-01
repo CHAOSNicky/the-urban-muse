@@ -3,11 +3,12 @@ import "../trendingcategory.css";
 import { useNavigate } from "react-router-dom";
 import API_BASE_URL from "../Constants/CommonConst";
 
-export default function TrendingCategory() {
+export default function TrendingCategory({ variant = "default" }) {
   const containerRef = useRef(null);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const isCompact = variant === "compact";
 
   const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
 
@@ -71,8 +72,9 @@ export default function TrendingCategory() {
   }
 
   return (
-    <section className="bg-[#edeaf5] py-12">
-      <h2 className="text-4xl text-center text-black font-medium mb-8">
+    <section className={`bg-[#edeaf5] ${isCompact ? "py-6" : "py-12"}`}>
+      <h2 className={`text-center text-black font-medium mb-8 ${isCompact ? "text-2xl" : "text-4xl"
+        }`}>
         TRENDING CATEGORIES 👇
       </h2>
 
@@ -80,14 +82,17 @@ export default function TrendingCategory() {
         ref={containerRef}
         className="px-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide text-black"
       >
-        <div className="flex gap-1 px-6 py-2 pr-20 whitespace-nowrap">
+        <div className={`flex ${isCompact ? "gap-6" : "gap-10"
+          } px-6 py-2 pr-20 whitespace-nowrap`}>
           {categories.map((c) => (
             <article
               key={c.id}
               onClick={() => navigate(`/category/${c.label.toLowerCase()}`)}
-              className="reveal-item snap-start flex-none w-64 md:w-72 lg:w-80 inline-flex flex-col items-center cursor-pointer"
+              className={`reveal-item snap-start flex-none ${isCompact ? "w-40 md:w-48" : "w-64 md:w-72 lg:w-80"
+                } inline-flex flex-col items-center cursor-pointer`}
             >
-              <div className="w-full aspect-[3/4] m-5 overflow-hidden rounded-lg">
+              <div className={`w-full aspect-[3/4] ${isCompact ? "m-2" : "m-5"
+                } overflow-hidden rounded-3xl`}>
                 <img
                   src={c.imageUrl}
                   alt={c.label}
@@ -100,7 +105,8 @@ export default function TrendingCategory() {
                 />
               </div>
 
-              <p className="mt-3 text-center font-semibold">{c.label}</p>
+              <p className={`mt-3 text-center font-semibold ${isCompact ? "text-sm" : ""
+                }`}>{c.label}</p>
             </article>
           ))}
         </div>

@@ -336,7 +336,7 @@ export default function Admin() {
                             value={catform.category_name}
                             onChange={onCategoryChange}
                             required
-                            className="border border-gray-300 rounded-xl p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
+                            className="text-black border border-gray-300 rounded-xl p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
                         />
                     </div>
 
@@ -405,7 +405,7 @@ export default function Admin() {
                             value={form.name}
                             onChange={onChange}
                             required
-                            className="border border-gray-300 rounded-xl p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
+                            className="text-black border border-gray-300 rounded-xl p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
                         />
                     </div>
 
@@ -418,7 +418,7 @@ export default function Admin() {
                             value={form.description}
                             onChange={onChange}
                             required
-                            className="border border-gray-300 rounded-xl p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
+                            className="text-black border border-gray-300 rounded-xl p-3 bg-white/70 focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
                         />
                     </div>
 
@@ -429,6 +429,7 @@ export default function Admin() {
                             value={form.categoryId}
                             onChange={onChange}
                             required
+                            className="text-black"
                         >
                             <option value="">-- Select Category --</option>
 
@@ -479,7 +480,7 @@ export default function Admin() {
                             </div>
 
                             {/* SIZE */}
-                            <div className="flex flex-col gap-2">
+                            <div className="text-black flex flex-col gap-2">
                                 <label className="font-medium text-gray-900">Size</label>
                                 <select
                                     name="size"
@@ -510,7 +511,7 @@ export default function Admin() {
                                         value={v.price}
                                         onChange={(e) => onVariantChange(idx, e)}
                                         required
-                                        className="border border-gray-300 rounded-xl p-3 bg-white focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
+                                        className="text-black border border-gray-300 rounded-xl p-3 bg-white focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
                                     />
                                 </div>
 
@@ -523,7 +524,7 @@ export default function Admin() {
                                         value={v.quantity}
                                         onChange={(e) => onVariantChange(idx, e)}
                                         required
-                                        className="border border-gray-300 rounded-xl p-3 bg-white focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
+                                        className="text-black border border-gray-300 rounded-xl p-3 bg-white focus:outline-none focus:ring-2 focus:ring-gray-800/20 focus:border-gray-900 transition"
                                     />
                                 </div>
                             </div>
