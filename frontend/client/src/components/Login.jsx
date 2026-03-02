@@ -7,13 +7,13 @@ export default function Login() {
   const [active, setActive] = useState("login");
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#0f1117] relative overflow-hidden px-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#edeaf5] relative overflow-hidden px-4">
       {/* Back arrow */}
       <div className="fixed top-7 left-7 z-50">
         <Link
           to="/"
           aria-label="Go To MainPage"
-          className="group flex items-center justify-center w-10 h-10 rounded-full bg-white/[0.06] border border-white/[0.1] text-gray-400 hover:text-white hover:border-indigo-500/50 hover:bg-indigo-500/10 transition-all duration-300"
+          className="text-black group flex items-center justify-center w-10 h-10 rounded-full bg-white shadow hover:shadow-md transition-all duration-300"
         >
           <svg
             width="20"
@@ -30,21 +30,16 @@ export default function Login() {
         </Link>
       </div>
 
-      {/* Ambient glow blobs */}
-      <div className="absolute top-[-15%] left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-600/15 blur-[120px] animate-float" />
-      <div className="absolute bottom-[-15%] right-[-10%] w-[450px] h-[450px] rounded-full bg-violet-600/10 blur-[120px] animate-float-delayed" />
-      <div className="absolute top-[40%] left-[50%] w-[300px] h-[300px] rounded-full bg-blue-600/[0.07] blur-[100px] animate-float" />
-
       <div className="w-full max-w-md z-10">
         {/* Tab switcher */}
         <div
-          className="relative flex w-full rounded-2xl glass-card p-1.5"
+          className="relative flex w-full rounded-2xl bg-white shadow-sm border border-gray-200 p-1.5"
           role="tablist"
           aria-label="Auth tabs"
         >
           {/* Sliding pill */}
           <div
-            className={`absolute inset-y-1.5 left-1.5 w-[calc(50%-6px)] rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-500/25 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${active === "login" ? "translate-x-0" : "translate-x-[calc(100%+6px)]"
+            className={`absolute inset-y-1.5 left-1.5 w-[calc(50%-6px)] rounded-xl bg-black shadow-lg transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${active === "login" ? "translate-x-0" : "translate-x-[calc(100%+6px)]"
               }`}
             aria-hidden="true"
           />
@@ -56,8 +51,8 @@ export default function Login() {
             aria-selected={active === "login"}
             onClick={() => setActive("login")}
             className={`relative z-10 flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 ${active === "login"
-                ? "text-white"
-                : "text-gray-500 hover:text-gray-300"
+              ? "text-white"
+              : "text-gray-500 hover:text-black mt-[1px]"
               }`}
           >
             LOGIN
@@ -68,8 +63,8 @@ export default function Login() {
             aria-selected={active === "signup"}
             onClick={() => setActive("signup")}
             className={`relative z-10 flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300 ${active === "signup"
-                ? "text-white"
-                : "text-gray-500 hover:text-gray-300"
+              ? "text-white"
+              : "text-gray-500 hover:text-black mt-[1px]"
               }`}
           >
             SIGNUP
@@ -77,8 +72,8 @@ export default function Login() {
         </div>
 
         {/* Form card */}
-        <div className="glass-card mt-6 rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-center text-gray-100 mb-6">
+        <div className="bg-white shadow-[0_12px_30px_rgba(0,0,0,0.08)] border border-gray-200 mt-6 rounded-2xl p-6 sm:p-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-center text-black mb-6">
             {active === "login" ? "Welcome Back 👋" : "Create Your Account 🚀"}
           </h2>
 

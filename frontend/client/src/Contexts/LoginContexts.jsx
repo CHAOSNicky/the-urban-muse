@@ -56,8 +56,7 @@ export function LoginProvider({ children }) {
     // ── Centralized logout ──────────────────────────────────────────
     const logout = useCallback(async () => {
         try {
-            const res = await fetch(
-                "/auth/logout",
+            const res = await fetch(`${API_BASE_URL}/auth/logout`,
                 {
                     method: "GET",
                     credentials: "include",

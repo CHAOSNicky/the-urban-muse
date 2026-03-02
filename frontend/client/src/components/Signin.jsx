@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../Contexts/LoginContexts';
 import API_BASE_URL from "../Constants/CommonConst";
 
+
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -12,6 +13,7 @@ export default function Signin() {
   const [cooldown, setCooldown] = useState(0);
   const liveRef = useRef(null);
   const navigate = useNavigate();
+  const { verifyAuth } = useContext(LoginContext);
 
   const normalizeEmail = (val) => val.trim();
   const isValidEmail = (val) => /\S+@\S+\.\S+/.test(val);
@@ -67,9 +69,10 @@ export default function Signin() {
       announce("✅ Logged in successfully.");
       setName(data.fullname);
       setLogin(true);
+      await verifyAuth();
       setTimeout(() => {
         navigate("/");
-      }, 2000);
+      }, 1500);
     } catch (err) {
       console.error(err);
       announce("⚠️ Login failed. Try again.");
@@ -114,18 +117,17 @@ export default function Signin() {
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-400 mb-1.5"
+          className="block text-sm font-medium text-black/70 mb-1.5"
         >
           Email address
         </label>
         <div className="relative">
-          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-black/40">
             <svg
               aria-hidden="true"
               width="18"
               height="18"
               viewBox="0 0 24 24"
-              className="opacity-70"
             >
               <path
                 d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
@@ -151,7 +153,7 @@ export default function Signin() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input-dark pl-10"
+            className="border border-black/20 bg-white text-black rounded-xl p-3 pl-10 w-full focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition"
             placeholder="you@example.com"
           />
         </div>
@@ -161,7 +163,7 @@ export default function Signin() {
       <div>
         <label
           htmlFor="otp"
-          className="block text-sm font-medium text-gray-400 mb-1.5"
+          className="block text-sm font-medium text-black/70 mb-1.5"
         >
           One-Time Passcode
         </label>
@@ -185,7 +187,7 @@ export default function Signin() {
                 setOtp(v);
               }
             }}
-            className="input-dark flex-1 tracking-[0.35em] tabular-nums text-center font-semibold text-lg"
+            className="border border-black/20 bg-white text-black rounded-xl p-2 sm:p-3 flex-1 tracking-[0.15em] sm:tracking-[0.35em] tabular-nums text-center font-semibold text-base sm:text-lg focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition"
             placeholder="• • • • • •"
             aria-describedby="otp-help"
           />
@@ -193,9 +195,9 @@ export default function Signin() {
             type="button"
             onClick={otpCall}
             disabled={otpLoading || cooldown > 0}
-            className={`px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 whitespace-nowrap ${otpLoading || cooldown > 0
-              ? "bg-white/[0.06] text-gray-600 cursor-not-allowed border border-white/[0.06]"
-              : "bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-600/30 hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/10 active:scale-95"
+            className={`px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 whitespace-nowrap ${otpLoading || cooldown > 0
+              ? "bg-black/5 text-black/40 cursor-not-allowed border border-black/10"
+              : "bg-transparent text-black border border-black/30 hover:border-black active:scale-95"
               }`}
           >
             {otpLoading ? (
@@ -209,7 +211,7 @@ export default function Signin() {
             )}
           </button>
         </div>
-        <p id="otp-help" className="mt-1.5 text-xs text-gray-600">
+        <p id="otp-help" className="mt-1.5 text-xs text-black/50">
           Check your inbox (and spam folder). OTP expires quickly.
         </p>
       </div>
@@ -219,8 +221,8 @@ export default function Signin() {
         type="submit"
         disabled={submitLoading}
         className={`w-full rounded-xl py-3 font-semibold text-sm tracking-wide transition-all duration-300 ${submitLoading
-          ? "bg-white/[0.06] text-gray-600 cursor-not-allowed"
-          : "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:brightness-110 active:scale-[0.98]"
+          ? "bg-black/10 text-black/40 cursor-not-allowed"
+          : "bg-black text-white hover:bg-black/90 active:scale-[0.98]"
           }`}
       >
         {submitLoading ? (
@@ -237,10 +239,10 @@ export default function Signin() {
         ref={liveRef}
         aria-live="polite"
         className={`min-h-[1.25rem] text-center text-sm mt-1 transition-colors duration-300 ${message.startsWith("✅")
-          ? "text-emerald-400"
+          ? "text-green-600"
           : message.startsWith("❌")
-            ? "text-red-400"
-            : "text-amber-400"
+            ? "text-red-500"
+            : "text-amber-500"
           }`}
       >
         {message}

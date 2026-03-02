@@ -186,12 +186,17 @@ export default function Admin() {
                     console.error("Presigning Failed", savecat.status, await savecat.text()); // 👈 see the real cause
                     return;
                 }
-                setCategorySaved(true);
-                fetchCategories();
-
                 const result = savecat.json();
                 console.log("Category Saved Successfully ✅");
 
+                // Reset Category Form
+                setCatform({ category_name: "" });
+                setCatimages([]);
+                setCategorySaved(true);
+
+                setTimeout(() => {
+                    setCategorySaved(false);
+                }, 2000);
             }
             catch (err) {
                 console.error("Error in onSubmit:", err)
@@ -281,17 +286,33 @@ export default function Admin() {
                 }
 
                 await saveprod.json();
-                setProductSaved(true);
                 console.log("Product Saved Successfully ✅");
 
+                // Reset Product Form
+                setForm({
+                    categoryId: "",
+                    name: "",
+                    description: "",
+                    newArrival: false,
+                    variants: [
+                        { size: "", quantity: "", price: "" }
+                    ]
+                });
+                setImages([]);
+                setProductSaved(true);
+
+                setTimeout(() => {
+                    setProductSaved(false);
+                }, 2000);
             }
             catch (err) {
                 console.error("Error in onSubmit:", err)
             }
 
-        }
-        catch (err) {
+        } catch (err) {
             console.error("Error in onSubmit:", err);
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -317,15 +338,13 @@ export default function Admin() {
                 </Link>
             </div>
 
-            <div className="py-6 text-center bg-white/70 backdrop-blur border-b border-gray-500 shadow-sm">
-                <h1 className="text-3xl font-semibold bg-clip-text text-transparent bg-gradient-to-b from-gray-900 to-gray-600">Welcome Admin</h1>
+            <div className="py-4 md:py-6 text-center bg-white/70 backdrop-blur border-b border-gray-500 shadow-sm">
+                <h1 className="text-2xl md:text-3xl font-semibold bg-clip-text text-transparent bg-gradient-to-b from-gray-900 to-gray-600">Welcome Admin</h1>
             </div>
 
+            <div className="flex flex-col md:flex-row items-start gap-8 md:gap-0 px-4 md:px-0 pb-8 md:pb-0">
 
-
-            <div className="flex items-start">
-
-                <form onSubmit={onCatSubmit} className="w-[40%] max-w-2xl mx-auto bg-white/50 backdrop-blur mt-8 shadow-[0_12px_30px_rgba(0,0,0,0.08)] rounded-2xl border border-gray-500 p-8 space-y-6">
+                <form onSubmit={onCatSubmit} className="w-full md:w-[40%] max-w-2xl mx-auto bg-white/50 backdrop-blur mt-4 md:mt-8 shadow-[0_12px_30px_rgba(0,0,0,0.08)] rounded-2xl border border-gray-500 p-6 md:p-8 space-y-6">
 
                     <div className="flex flex-col gap-2">
                         <label htmlFor="category_name" className="font-medium text-gray-900">Category Name</label>
@@ -394,7 +413,7 @@ export default function Admin() {
 
 
 
-                <form onSubmit={onSubmit} className="w-[60%] max-w-2xl mx-auto bg-white/50 backdrop-blur mt-8 shadow-[0_12px_30px_rgba(0,0,0,0.08)] rounded-2xl border border-gray-500 p-8 space-y-6">
+                <form onSubmit={onSubmit} className="w-full md:w-[60%] max-w-2xl mx-auto bg-white/50 backdrop-blur md:mt-8 shadow-[0_12px_30px_rgba(0,0,0,0.08)] rounded-2xl border border-gray-500 p-6 md:p-8 space-y-6">
 
                     <div className="flex flex-col gap-2">
                         <label htmlFor="product_name" className="font-medium text-gray-900">Product Name</label>
