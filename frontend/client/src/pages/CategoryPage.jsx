@@ -51,13 +51,13 @@ export default function CategoryPage() {
         <div className="bg-[#edeaf5] py-12 relative">
 
             {/* Back button */}
-            <button
+            {/* <button
                 onClick={() => navigate('/')}
                 className="absolute top-6 left-8 z-20 inline-flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md hover:shadow-lg transition-all duration-300"
                 aria-label="Back to home"
             >
                 <ArrowLeftIcon className="h-5 w-5 text-black" />
-            </button>
+            </button> */}
 
             <h2 className="text-4xl text-center text-black font-medium font-sans mb-11">
                 {displayName}

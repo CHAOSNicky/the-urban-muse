@@ -1,21 +1,15 @@
 package com.practice.loginwebapp.services;
 
-import com.practice.loginwebapp.dtos.AddProductDto;
 import com.practice.loginwebapp.dtos.ProductRequest;
 import com.practice.loginwebapp.dtos.ProductVarientRequest;
 import com.practice.loginwebapp.exceptions.ResourceNotFoundException;
-import com.practice.loginwebapp.models.AddProduct;
 import com.practice.loginwebapp.models.Product;
 import com.practice.loginwebapp.models.ProductCategory;
 import com.practice.loginwebapp.models.ProductVarient;
-import com.practice.loginwebapp.repositories.AddProductRepo;
 import com.practice.loginwebapp.repositories.CategoryRepo;
 import com.practice.loginwebapp.repositories.ProductRepo;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class AddProductService {
@@ -56,18 +50,3 @@ public class AddProductService {
         productrepo.save(product);
     }
 }
-
-
-
-//        AddProduct addproduct1 = new AddProduct();
-//        addproduct1.setProductName(addproduct.getProductName());
-//        addproduct1.setProductDesc(addproduct.getProductDesc());
-//        addproduct1.setProductCategory(addproduct.getProductCategory());
-//        addproduct1.setProductPrice(addproduct.getProductPrice());
-//        addproduct1.setProductSize(addproduct.getProductSize());
-//        addproduct1.setProductQuantity(addproduct.getProductQuantity());
-//        List<String> images = addproduct.getImageKey();
-//        String imageKey = String.join(",",images);
-//        addproduct1.setImageObjectKey(imageKey);
-//        AddProduct saved = addproductrepo.save(addproduct1);
-//        return saved.getProduct_id();

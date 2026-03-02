@@ -5,7 +5,9 @@ import Login from './components/Login';
 import Admin from './components/Admin'
 import MainImage from './pages/MainImage'
 import CategoryPage from './pages/CategoryPage'
+import SingleProductPage from './pages/SingleProductPage'
 import ShopLayout from './layouts/ShopLayout'
+import ProductLayout from './layouts/ProductLayout'
 import { LoginProvider } from './Contexts/LoginContexts'
 
 export default function App() {
@@ -19,6 +21,9 @@ export default function App() {
                 <Route path="/product" element={<MainImage />} />
                 <Route element={<ShopLayout />}>
                     <Route path="/category/:categoryName" element={<CategoryPage />} />
+                </Route>
+                <Route element={<ProductLayout />}>
+                    <Route path="/product/:productId" element={<SingleProductPage />} />
                 </Route>
             </Routes>
         </ LoginProvider>

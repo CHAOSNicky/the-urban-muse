@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 
 export default function ProductCard({ product }) {
+    const navigate = useNavigate();
     const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
 
     const keys = Array.isArray(product.productImageObjectKey)
@@ -12,15 +14,30 @@ export default function ProductCard({ product }) {
     // If only one image, duplicate it so the slide container never shows empty space
     const img2 = keys[1] ? `${S3_BASE_URL}${keys[1]}` : img1;
 
+    const handleCardClick = () => {
+        navigate(`/product/${product.productId}`);
+    };
+
+    const handleQuickBuy = (e) => {
+        e.stopPropagation();
+        // TODO: Quick buy logic
+    };
+
     return (
-        <div className="bg-[#edeaf5] overflow-hidden flex flex-col relative">
+        <div
+            className="bg-[#edeaf5] overflow-hidden flex flex-col relative cursor-pointer"
+            onClick={handleCardClick}
+        >
 
             {/* Image container + cart button */}
             <div className="h-[85%] relative w-full overflow-hidden group aspect-[3/4]">
 
                 {/* Quick Buy button — matches NewArrivals exactly */}
                 <div className="absolute bottom-3 right-3 z-10 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
-                    <button className="bg-white flex items-center rounded w-10 hover:w-32 overflow-hidden transition-all duration-500 ease-in-out group/cart px-2 py-1 shadow-md">
+                    <button
+                        onClick={handleQuickBuy}
+                        className="bg-white flex items-center rounded w-10 hover:w-32 overflow-hidden transition-all duration-500 ease-in-out group/cart px-2 py-1 shadow-md"
+                    >
                         <ShoppingCartIcon className="h-6 w-6 text-black flex-shrink-0" />
                         <span className="ml-2 whitespace-nowrap text-sm text-black opacity-0 translate-x-4 group-hover/cart:opacity-100 group-hover/cart:translate-x-0 transition-all duration-500 ease-in-out">
                             QUICK BUY
