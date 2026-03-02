@@ -72,27 +72,26 @@ export default function TrendingCategory({ variant = "default" }) {
   }
 
   return (
-    <section className={`bg-[#edeaf5] ${isCompact ? "py-6" : "py-12"}`}>
-      <h2 className={`text-center text-black font-medium mb-8 ${isCompact ? "text-2xl" : "text-4xl"
+    <section className={`bg-[#edeaf5] ${isCompact ? "py-6 md:py-6" : "py-8 md:py-12"}`}>
+      <h2 className={`text-center text-black font-medium mb-6 md:mb-8 ${isCompact ? "text-xl md:text-2xl" : "text-2xl md:text-4xl"
         }`}>
         TRENDING CATEGORIES 👇
       </h2>
 
       <div
         ref={containerRef}
-        className="px-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide text-black"
+        className="w-full overflow-x-auto overflow-y-hidden scroll-smooth touch-pan-x snap-x snap-mandatory scrollbar-hide text-black scroll-pl-4 md:scroll-pl-8"
       >
-        <div className={`flex ${isCompact ? "gap-6" : "gap-10"
-          } px-6 py-2 pr-20 whitespace-nowrap`}>
+        <div className={`flex ${isCompact ? "gap-4 md:gap-6" : "gap-4 md:gap-10"
+          } px-4 md:px-8 py-2 w-max`}>
           {categories.map((c) => (
             <article
               key={c.id}
               onClick={() => navigate(`/category/${c.label.toLowerCase()}`)}
-              className={`reveal-item snap-start flex-none ${isCompact ? "w-40 md:w-48" : "w-64 md:w-72 lg:w-80"
+              className={`reveal-item snap-start flex-none ${isCompact ? "w-32 md:w-48" : "w-40 sm:w-48 md:w-72 lg:w-80"
                 } inline-flex flex-col items-center cursor-pointer`}
             >
-              <div className={`w-full aspect-[3/4] ${isCompact ? "m-2" : "m-5"
-                } overflow-hidden rounded-3xl`}>
+              <div className={`w-full aspect-[3/4] mb-3 md:mb-5 overflow-hidden rounded-2xl md:rounded-3xl`}>
                 <img
                   src={c.imageUrl}
                   alt={c.label}
@@ -105,7 +104,7 @@ export default function TrendingCategory({ variant = "default" }) {
                 />
               </div>
 
-              <p className={`mt-3 text-center font-semibold ${isCompact ? "text-sm" : ""
+              <p className={`mt-2 md:mt-3 text-center font-semibold ${isCompact ? "text-xs md:text-sm" : "text-sm md:text-base"
                 }`}>{c.label}</p>
             </article>
           ))}

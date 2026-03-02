@@ -30,16 +30,16 @@ export default function ProductCard({ product }) {
         >
 
             {/* Image container + cart button */}
-            <div className="h-[85%] relative w-full overflow-hidden group aspect-[3/4]">
+            <div className="aspect-[4/5] md:aspect-[3/4] md:h-[85%] relative w-full overflow-hidden group rounded-lg">
 
                 {/* Quick Buy button — matches NewArrivals exactly */}
-                <div className="absolute bottom-3 right-3 z-10 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 z-10 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
                     <button
                         onClick={handleQuickBuy}
-                        className="bg-white flex items-center rounded w-10 hover:w-32 overflow-hidden transition-all duration-500 ease-in-out group/cart px-2 py-1 shadow-md"
+                        className="bg-white flex items-center rounded w-8 md:w-10 hover:w-28 md:hover:w-32 overflow-hidden transition-all duration-500 ease-in-out group/cart px-1 md:px-2 py-1 shadow-md"
                     >
-                        <ShoppingCartIcon className="h-6 w-6 text-black flex-shrink-0" />
-                        <span className="ml-2 whitespace-nowrap text-sm text-black opacity-0 translate-x-4 group-hover/cart:opacity-100 group-hover/cart:translate-x-0 transition-all duration-500 ease-in-out">
+                        <ShoppingCartIcon className="h-4 w-4 md:h-6 md:w-6 text-black flex-shrink-0" />
+                        <span className="ml-1 md:ml-2 whitespace-nowrap text-[10px] md:text-sm text-black opacity-0 translate-x-4 group-hover/cart:opacity-100 group-hover/cart:translate-x-0 transition-all duration-500 ease-in-out">
                             QUICK BUY
                         </span>
                     </button>
@@ -63,15 +63,15 @@ export default function ProductCard({ product }) {
             </div>
 
             {/* Name */}
-            <div className="h-[8%] flex sm:items-end md:items-end justify-center pt-4 sm:pt-0">
-                <p className="text-center text-xs sm:text-sm md:text-base font-semibold">
+            <div className="h-[8%] flex items-end justify-center pt-3 md:pt-4">
+                <p className="text-center text-[10px] sm:text-sm md:text-base font-semibold">
                     {product.name}
                 </p>
             </div>
 
             {/* Price / description */}
-            <div className="h-[7%] flex items-center justify-center pb-2">
-                <p className="text-center font-light text-xs sm:text-sm md:text-base">
+            <div className="h-[7%] flex items-center justify-center pb-1 md:pb-2">
+                <p className="text-center font-light text-[9px] sm:text-sm md:text-base">
                     {product.description || ''}
                 </p>
             </div>

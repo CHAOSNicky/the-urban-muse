@@ -32,11 +32,11 @@ const trendingCategories = [
 
 function NewArrivals() {
   return (
-    <div className="bg-[#edeaf5] py-12">
+    <div className="bg-[#edeaf5] py-8 md:py-12">
 
-      <h2 className="text-4xl text-center text-black font-medium font-sans mb-11">🎉 NEW ARRIVALS</h2>
+      <h2 className="text-2xl md:text-4xl text-center text-black font-medium font-sans mb-8 md:mb-11">🎉 NEW ARRIVALS</h2>
 
-      <div className=" text-black grid grid-cols-2 md:grid-cols-4 gap-6 px-8">
+      <div className="text-black grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 px-4 md:px-8">
         {trendingCategories.map((item, index) => (
           <div
             key={index}
@@ -44,12 +44,12 @@ function NewArrivals() {
 
           >
             {/* Image swap on hover */}
-            <div className="h-[85%] relative w-full overflow-hidden group rounded-lg">
+            <div className="aspect-[4/5] md:aspect-auto md:h-[85%] relative w-full overflow-hidden group rounded-lg">
               {/* Cart Button */}
-              <div className="absolute bottom-3 right-3 z-10 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
-                <button className="bg-white flex items-center rounded w-10 hover:w-32 overflow-hidden transition-all duration-500 ease-in-out group/cart px-2 py-1 shadow-md">
-                  <ShoppingCartIcon className="h-6 w-6 text-black flex-shrink-0" />
-                  <span className="ml-2 whitespace-nowrap text-sm text-black opacity-0 translate-x-4 group-hover/cart:opacity-100 group-hover/cart:translate-x-0 transition-all duration-500 ease-in-out">
+              <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 z-10 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+                <button className="bg-white flex items-center rounded w-8 md:w-10 hover:w-28 md:hover:w-32 overflow-hidden transition-all duration-500 ease-in-out group/cart px-1 md:px-2 py-1 shadow-md">
+                  <ShoppingCartIcon className="h-4 w-4 md:h-6 md:w-6 text-black flex-shrink-0" />
+                  <span className="ml-1 md:ml-2 whitespace-nowrap text-[10px] md:text-sm text-black opacity-0 translate-x-4 group-hover/cart:opacity-100 group-hover/cart:translate-x-0 transition-all duration-500 ease-in-out">
                     QUICK BUY
                   </span>
                 </button>
@@ -65,13 +65,13 @@ function NewArrivals() {
 
 
             {/* Label section */}
-            <div className="h-[8%] flex sm:items-end md:items-end justify-center pt-4 sm:pt-0">
-              <p className="text-center text-xs sm:text-sm md:text-base font-semibold">
+            <div className="h-[8%] flex items-end justify-center pt-3 md:pt-4">
+              <p className="text-center text-[10px] sm:text-sm md:text-base font-semibold">
                 {item.name}
               </p>
             </div>
-            <div className="h-[7%] flex items-center justify-center pb-2">
-              <p className="text-center font-light text-xs sm:text-sm md:text-base">
+            <div className="h-[7%] flex items-center justify-center pb-1 md:pb-2">
+              <p className="text-center font-light text-[9px] sm:text-sm md:text-base">
                 {item.name1}
               </p>
             </div>

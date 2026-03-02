@@ -48,7 +48,7 @@ export default function CategoryPage() {
     }
 
     return (
-        <div className="bg-[#edeaf5] py-12 relative">
+        <div className="bg-[#edeaf5] py-8 md:py-12 relative">
 
             {/* Back button */}
             {/* <button
@@ -59,14 +59,14 @@ export default function CategoryPage() {
                 <ArrowLeftIcon className="h-5 w-5 text-black" />
             </button> */}
 
-            <h2 className="text-4xl text-center text-black font-medium font-sans mb-11">
+            <h2 className="text-2xl md:text-4xl text-center text-black font-medium font-sans mb-6 md:mb-11">
                 {displayName}
             </h2>
 
             {products.length === 0 ? (
-                <p className="text-center text-black py-12">No products found.</p>
+                <p className="text-center text-black py-8 md:py-12">No products found.</p>
             ) : (
-                <div className="text-black grid grid-cols-2 md:grid-cols-4 gap-6 px-8">
+                <div className="text-black grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 sm:px-6 md:px-8">
                     {products.map((product) => (
                         <ProductCard key={product.productId} product={product} />
                     ))}
