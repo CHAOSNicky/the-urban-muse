@@ -54,10 +54,10 @@ export function CartProvider({ children }) {
                     const response = await fetch(`${API_BASE_URL}/api/cart/check-stock`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            variantId: item.variantId, 
-                            size: item.size.toUpperCase(), 
-                            quantity: item.quantity 
+                        body: JSON.stringify({
+                            variantId: item.variantId,
+                            size: item.size.toUpperCase(),
+                            quantity: item.quantity
                         }),
                     });
 
@@ -75,9 +75,9 @@ export function CartProvider({ children }) {
                     if (res) {
                         const isOverStock = item.quantity > res.availableStock;
                         if (isOverStock) hasErrors = true;
-                        return { 
-                            ...item, 
-                            isOverStock: isOverStock, 
+                        return {
+                            ...item,
+                            isOverStock: isOverStock,
                             availableStock: res.availableStock
                         };
                     }
@@ -96,24 +96,34 @@ export function CartProvider({ children }) {
         return () => { isMounted = false; };
     }, [isCartOpen]);
 
+    const generateUUID = () => {
+        // Check if crypto.randomUUID exists (only on HTTPS)
+        if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
+            return window.crypto.randomUUID();
+        }
+        // Fallback for HTTP / Older Browsers
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    };
+
     const addToCart = useCallback((item) => {
         setCartItems(prev => {
             const targetVariantId = item.variantId;
-            const existing = prev.find(i => 
-                i.variantId === targetVariantId && 
+            const existing = prev.find(i =>
+                i.variantId === targetVariantId &&
                 i.size === item.size
             );
 
             if (existing) {
-                return prev.map(i => 
-                    i.variantId === targetVariantId && 
-                    i.size === item.size
-                    ? { ...i, quantity: item.quantity, isOverStock: false, availableStock: undefined }
-                    : i
+                return prev.map(i =>
+                    i.variantId === targetVariantId &&
+                        i.size === item.size
+                        ? { ...i, quantity: item.quantity, isOverStock: false, availableStock: undefined }
+                        : i
                 );
             }
             // Add unique ID for the key
-            return [...prev, { ...item, isOverStock: false, availableStock: undefined, id: crypto.randomUUID() }];
+            return [...prev, { ...item, isOverStock: false, availableStock: undefined, id: generateUUID() }];
+            // return [...prev, { ...item, isOverStock: false, availableStock: undefined, id: crypto.randomUUID() }];
         });
 
         // Force the drawer open
@@ -136,7 +146,7 @@ export function CartProvider({ children }) {
         if (debounceTimers.current[id]) clearTimeout(debounceTimers.current[id]);
 
         debounceTimers.current[id] = setTimeout(async () => {
-             try {
+            try {
                 console.log("Stock validation payload:", {
                     variantId,
                     size: size.toUpperCase(),
@@ -146,10 +156,10 @@ export function CartProvider({ children }) {
                 const response = await fetch(`${API_BASE_URL}/api/cart/check-stock`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        variantId, 
-                        size: size.toUpperCase(), 
-                        quantity: newQuantity 
+                    body: JSON.stringify({
+                        variantId,
+                        size: size.toUpperCase(),
+                        quantity: newQuantity
                     }),
                 });
 
@@ -158,17 +168,17 @@ export function CartProvider({ children }) {
 
                 setCartItems(prev => prev.map(item => {
                     if (item.id === id) {
-                        return { 
-                            ...item, 
-                            isOverStock: newQuantity > data.availableStock, 
-                            availableStock: data.availableStock 
+                        return {
+                            ...item,
+                            isOverStock: newQuantity > data.availableStock,
+                            availableStock: data.availableStock
                         };
                     }
                     return item;
                 }));
-             } catch (error) {
-                 console.error("Background cart sync failed", error);
-             }
+            } catch (error) {
+                console.error("Background cart sync failed", error);
+            }
         }, 300);
     }, []);
 
