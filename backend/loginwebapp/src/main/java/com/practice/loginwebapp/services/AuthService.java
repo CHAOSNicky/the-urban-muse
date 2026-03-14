@@ -11,20 +11,20 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.practice.loginwebapp.repositories.LoginRepo;
+import com.practice.loginwebapp.repositories.AccountRepo;
 
 import java.util.Optional;
 
 @Service
 public class AuthService {
 
-    private final LoginRepo loginrepo;
+    private final AccountRepo accountrepo;
     private final PasswordEncoder encoder;
     private final StringRedisTemplate redistemplate;
     private final JwtUtil jwtutil;
 
-    public AuthService(LoginRepo loginrepo, PasswordEncoder encoder, StringRedisTemplate redistemplate, JwtUtil jwtutil) {
-        this.loginrepo = loginrepo;
+    public AuthService(AccountRepo accountrepo, PasswordEncoder encoder, StringRedisTemplate redistemplate, JwtUtil jwtutil) {
+        this.accountrepo = accountrepo;
         this.encoder = encoder;
         this.redistemplate = redistemplate;
         this.jwtutil = jwtutil;
@@ -32,7 +32,7 @@ public class AuthService {
 
     public void createAccount(Signup signup){
         String storedOtp = redistemplate.opsForValue().get("OTP_" + signup.getEmail());
-        Optional<Account> acc = loginrepo.findByEmail(signup.getEmail());
+        Optional<Account> acc = accountrepo.findByEmail(signup.getEmail());
         if(acc.isPresent()){
             throw new AccountAlreadyPresentException("Account already exists");
         }
@@ -45,12 +45,12 @@ public class AuthService {
         account.setEmail(signup.getEmail());
         account.setRole(Role.USER);
 
-        loginrepo.save(account);
+        accountrepo.save(account);
     }
 
     public String verifyAccount(Signin signin){
         String storedOtp = redistemplate.opsForValue().get("OTP_" + signin.getEmail());
-        Optional<Account> acc = loginrepo.findByEmail(signin.getEmail());
+        Optional<Account> acc = accountrepo.findByEmail(signin.getEmail());
         if(acc.isEmpty()){
             throw new AccountAlreadyPresentException("Account does not exist");
         }

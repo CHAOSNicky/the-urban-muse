@@ -2,7 +2,7 @@ package com.practice.loginwebapp.controllers;
 
 import com.practice.loginwebapp.dtos.Otp;
 import com.practice.loginwebapp.models.Account;
-import com.practice.loginwebapp.repositories.LoginRepo;
+import com.practice.loginwebapp.repositories.AccountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +19,14 @@ public class OtpController {
     OtpService otpservice;
 
     @Autowired
-    LoginRepo loginrepo;
+    AccountRepo accountrepo;
  
     @PostMapping("/generate")
     public ResponseEntity<String> generateOtp(@RequestBody Otp otp){
         System.out.println("Generating OTP for "+ otp.getFullName());
 
         if(otp.getFullName() == null){
-            Optional<Account> name = loginrepo.findByEmail(otp.getEmail());
+            Optional<Account> name = accountrepo.findByEmail(otp.getEmail());
             otp.setFullName(name.get().getFullName());
         }
         System.out.println("Generating OTP for "+ otp.getFullName());

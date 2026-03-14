@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.practice.loginwebapp.models.Account;
 
 @Repository
-public interface LoginRepo extends JpaRepository<Account, Integer>{
+public interface AccountRepo extends JpaRepository<Account, Integer>{
     Optional<Account> findByEmail(String email);
 }

@@ -9,23 +9,28 @@ import SingleProductPage from './pages/SingleProductPage'
 import ShopLayout from './layouts/ShopLayout'
 import ProductLayout from './layouts/ProductLayout'
 import { LoginProvider } from './Contexts/LoginContexts'
+import { CartProvider } from './Contexts/CartContext'
+import CartDrawer from './components/CartDrawer'
 
 export default function App() {
 
     return (
         <LoginProvider>
-            <Routes>
-                <Route path="/" element={<MainHome />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/product" element={<MainImage />} />
-                <Route element={<ShopLayout />}>
-                    <Route path="/category/:categoryName" element={<CategoryPage />} />
-                </Route>
-                <Route element={<ProductLayout />}>
-                    <Route path="/product/:productId" element={<SingleProductPage />} />
-                </Route>
-            </Routes>
-        </ LoginProvider>
+            <CartProvider>
+                <CartDrawer />
+                <Routes>
+                    <Route path="/" element={<MainHome />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/product" element={<MainImage />} />
+                    <Route element={<ShopLayout />}>
+                        <Route path="/category/:categoryName" element={<CategoryPage />} />
+                    </Route>
+                    <Route element={<ProductLayout />}>
+                        <Route path="/product/:productId" element={<SingleProductPage />} />
+                    </Route>
+                </Routes>
+            </CartProvider>
+        </LoginProvider>
     )
 }

@@ -1,16 +1,20 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import API_BASE_URL from '../Constants/CommonConst';
+import { CartContext } from '../Contexts/CartContext';
 
 export default function SingleProductPage() {
     const { productId } = useParams();
     const navigate = useNavigate();
     const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
+    const { addToCart, setIsCartOpen, cartItems, setCartError } = useContext(CartContext);
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [addingToCart, setAddingToCart] = useState(false);
+    const [stockWarning, setStockWarning] = useState(null);
 
     // UI state
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -100,6 +104,7 @@ export default function SingleProductPage() {
         return product?.varientResponseList?.map((v) => ({
             ...v,
             size: v.size.toUpperCase(),
+            variantId: v.variantId || v.varientId, // Safely normalize to standard variantId
         })) || [];
     }, [product?.varientResponseList]);
 
@@ -112,18 +117,58 @@ export default function SingleProductPage() {
     const handleSizeSelect = (sizeStr) => {
         setSelectedSize(sizeStr);
         setQuantity(1);
+        setStockWarning(null);
     };
 
     const decrementQty = () => {
         setQuantity((q) => Math.max(1, q - 1));
+        setStockWarning(null);
     };
 
     const incrementQty = () => {
         setQuantity((q) => Math.min(100, q + 1));
+        setStockWarning(null);
     };
 
     const toggleAccordion = (section) => {
         setExpandedSection((prev) => (prev === section ? null : section));
+    };
+
+    const handleAddToCart = async () => {
+        if (!selectedVariant) return;
+        setStockWarning(null);
+
+        const targetVariantId = selectedVariant.variantId;
+
+        const existingItem = cartItems.find(i => 
+            i.variantId === targetVariantId && 
+            i.size === selectedSize
+        );
+        const currentCartQty = existingItem ? Number(existingItem.quantity) : 0;
+        const newTotalQuantity = currentCartQty + Number(quantity);
+
+        setAddingToCart(true);
+
+        try {
+            // UNRESTRICTED ADD TO CONTEXT
+            addToCart({
+                productId: product.productId,
+                variantId: targetVariantId, 
+                name: product.name,
+                size: selectedSize,
+                price: selectedVariant.price,
+                quantity: newTotalQuantity, // Send the FULL requested quantity
+                image: imageKeys.length > 0 ? imageUrl(imageKeys[0]) : '/fallback.png',
+                isOverStock: false // CartDrawer handles validation
+            });
+            setIsCartOpen(true);
+
+        } catch (error) {
+            console.error("Fatal Error inside handleAddToCart:", error);
+            setStockWarning("An unexpected error occurred.");
+        } finally {
+            setAddingToCart(false);
+        }
     };
 
     // ── Loading ──────────────────────────────────────────────
@@ -309,8 +354,8 @@ export default function SingleProductPage() {
                                             key={sizeStr}
                                             onClick={() => handleSizeSelect(sizeStr)}
                                             className={`min-w-[3rem] px-4 py-2 text-sm border transition-all duration-200 ${isSelected
-                                                    ? 'bg-black text-white border-black'
-                                                    : 'bg-transparent text-black border-black/30 hover:border-black'
+                                                ? 'bg-black text-white border-black'
+                                                : 'bg-transparent text-black border-black/30 hover:border-black'
                                                 }`}
                                         >
                                             {sizeStr}
@@ -348,12 +393,24 @@ export default function SingleProductPage() {
 
                         {/* Action Buttons */}
                         <div className="flex flex-col gap-3 mt-2">
+                            {/* Warning Label */}
+                            {stockWarning && (
+                                <div className="text-red-500 text-sm font-medium animate-fade-in-down mb-1">
+                                    {stockWarning}
+                                </div>
+                            )}
+
                             {/* Add to Cart */}
                             <button
-                                disabled={!selectedVariant}
-                                className="w-full py-3.5 text-sm tracking-widest uppercase font-medium transition-all duration-300 bg-black text-white hover:bg-black/85 disabled:bg-black/20 disabled:cursor-not-allowed"
+                                disabled={!selectedVariant || addingToCart}
+                                onClick={handleAddToCart}
+                                className="w-full py-3.5 text-sm tracking-widest uppercase font-medium transition-all duration-300 bg-black text-white hover:bg-black/85 disabled:bg-black/20 disabled:cursor-not-allowed flex justify-center items-center"
                             >
-                                Add to Cart
+                                {addingToCart ? (
+                                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                ) : (
+                                    "Add to Cart"
+                                )}
                             </button>
 
                             {/* Buy Now */}

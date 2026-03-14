@@ -33,7 +33,7 @@ public class OtpService {
             String otp = String.format("%06d", new Random().nextInt(999999));
             body += otp;
 
-            redistemplate.opsForValue().set("OTP_" + to, otp, 30, TimeUnit.SECONDS);
+            redistemplate.opsForValue().set("OTP_" + to, otp, 60, TimeUnit.SECONDS);
 
             message.setFrom("rameshsrinikesh@gmail.com");
             message.setTo(to);

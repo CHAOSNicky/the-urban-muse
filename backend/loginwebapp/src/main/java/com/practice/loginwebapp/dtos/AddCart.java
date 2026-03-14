@@ -3,13 +3,11 @@ package com.practice.loginwebapp.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Otp {
-    public String fullName;
-    public String email;
-
+public class AddCart {
+    private Map<Long, Long> cartProdIdAndQuantity;
 }

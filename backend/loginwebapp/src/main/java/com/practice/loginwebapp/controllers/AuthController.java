@@ -7,7 +7,9 @@ import java.util.Optional;
 import com.practice.loginwebapp.dtos.Signin;
 import com.practice.loginwebapp.dtos.Signup;
 import com.practice.loginwebapp.dtos.SuccessResposne;
+import com.practice.loginwebapp.exceptions.AuthenticationIsNullException;
 import com.practice.loginwebapp.models.Account;
+import com.practice.loginwebapp.repositories.AccountRepo;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.practice.loginwebapp.repositories.LoginRepo;
+import com.practice.loginwebapp.repositories.AccountRepo;
 import com.practice.loginwebapp.services.AuthService;
 import com.practice.loginwebapp.util.JwtUtil;
 
@@ -30,14 +32,14 @@ import jakarta.servlet.http.HttpServletResponse;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final LoginRepo loginrepo;
+    private final AccountRepo accountrepo;
     private final JwtUtil jwtUtil;
     private final AuthService authservice;
     private final StringRedisTemplate redistemplate;
 
 
-    public AuthController(LoginRepo loginrepo, JwtUtil jwtUtil, AuthService authservice, StringRedisTemplate redistemplate) {
-        this.loginrepo = loginrepo;
+    public AuthController(AccountRepo accountrepo, JwtUtil jwtUtil, AuthService authservice, StringRedisTemplate redistemplate) {
+        this.accountrepo = accountrepo;
         this.jwtUtil = jwtUtil;
         this.authservice = authservice;
         this.redistemplate = redistemplate;
@@ -68,7 +70,7 @@ public class AuthController {
                 .body(
                         Map.of(
                                 "message", "User Successfully Authenticated",
-                                "fullname", loginrepo.findByEmail(signin.getEmail()).get().getFullName()
+                                "fullname", accountrepo.findByEmail(signin.getEmail()).get().getFullName()
                         )
                 );
     }
@@ -99,11 +101,11 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication){
         if(authentication == null || !authentication.isAuthenticated()){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new AuthenticationIsNullException("Authentication is needed");
         }
 
         String email = authentication.getName();
-        Account acc =  loginrepo.findByEmail(email).orElseThrow();
+        Account acc =  accountrepo.findByEmail(email).orElseThrow();
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 Map.of(

@@ -2,11 +2,13 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { ShoppingCartIcon, MagnifyingGlassIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LoginContext } from '../Contexts/LoginContexts';
+import { CartContext } from '../Contexts/CartContext';
 
 export default function HeaderNav({ overlay = true }) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const location = useLocation();
     const { name, login, logout, role } = useContext(LoginContext);
+    const { setIsCartOpen, cartItems } = useContext(CartContext);
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     const menuRef = useRef(null);
@@ -140,8 +142,13 @@ export default function HeaderNav({ overlay = true }) {
                         <button className="p-1 text-black" aria-label="Search">
                             <MagnifyingGlassIcon className="h-6 w-6 sm:h-7 sm:w-7" />
                         </button>
-                        <button className="p-1 text-black" aria-label="Cart">
+                        <button onClick={() => setIsCartOpen(true)} className="p-1 text-black relative" aria-label="Cart">
                             <ShoppingCartIcon className="h-6 w-6 sm:h-7 sm:w-7" />
+                            {cartItems.length > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-gray-100 text-black text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-gray-300">
+                                    {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+                                </span>
+                            )}
                         </button>
                     </div>
                 </div>

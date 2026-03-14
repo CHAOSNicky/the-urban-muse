@@ -7,18 +7,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.practice.loginwebapp.models.Account;
-import com.practice.loginwebapp.repositories.LoginRepo;
+import com.practice.loginwebapp.repositories.AccountRepo;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private LoginRepo userRepository;
+    private AccountRepo accountrepo;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("Entered loadByUsername");
-        Account user = userRepository.findByEmail(username)
+        Account user = accountrepo.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
         System.out.println("User Details are : " + user.getEmail());
         String password = ""; // intentionally empty, JWT-based auth
