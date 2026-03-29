@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { XMarkIcon, TrashIcon, MinusIcon, PlusIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
-import { CartContext } from '../Contexts/CartContext';
+import { CartContext, normalizeImageUrl } from '../Contexts/CartContext';
 
 // --- Sub-components to keep main component clean ---
 
@@ -45,57 +45,54 @@ const RewardProgressBar = ({ currentTotal }) => {
     const freeShippingThreshold = 999;
     const freeGiftThreshold = 4999;
 
-    // Calculate progress percentage based on the max threshold
     const maxProgress = Math.min((currentTotal / freeGiftThreshold) * 100, 100);
-
     const hasFreeShipping = currentTotal >= freeShippingThreshold;
     const hasFreeGift = currentTotal >= freeGiftThreshold;
 
     return (
-        <div className="w-full bg-gray-800 text-white py-3 sm:py-4 px-4 sm:px-6 flex flex-col items-center">
-            <div className="text-sm sm:text-md font-medium mb-6 sm:mb-10">Best reward unlocked</div>
+        <div className="relative w-full overflow-hidden bg-gray-800 text-white py-3 sm:py-4 px-3 sm:px-4 flex flex-col items-center">
+            <div className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 tracking-wide text-gray-100">Best reward unlocked</div>
 
-            <div className="relative w-full max-w-sm mb-6">
-                {/* Background track */}
-                <div className="absolute top-1/2 left-0 w-full h-2 -translate-y-1/2 bg-gray-700 rounded-full"></div>
-                {/* Active progress */}
-                <div
-                    className="absolute top-1/2 left-0 h-2 -translate-y-1/2 bg-white rounded-full transition-all duration-500 ease-out"
-                    style={{ width: `${maxProgress}%` }}
-                ></div>
-
-                {/* Shipping Node */}
-                <div className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center" style={{ left: `${(freeShippingThreshold / freeGiftThreshold) * 100}%` }}>
-                    <div className="absolute -top-6 whitespace-nowrap bg-[#222] text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
-                        Free Shipping
-                    </div>
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 border-black z-10 transition-colors ${hasFreeShipping ? 'bg-black text-white' : 'bg-[#333]'}`}>
-                        {hasFreeShipping && (
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                        )}
-                    </div>
-                    <div className="absolute -bottom-6 bg-black text-xs px-2 py-0.5 rounded-full border border-gray-600">
-                        ₹999
-                    </div>
+            <div className="relative w-full max-w-full flex flex-col gap-2">
+                {/* Labels Top */}
+                <div className="flex justify-between items-center w-full gap-2">
+                    <span className="whitespace-nowrap text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#222] px-2 py-0.5 rounded text-gray-200">Free Shipping</span>
+                    <span className="whitespace-nowrap text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#222] px-2 py-0.5 rounded text-gray-200">Free Gift</span>
                 </div>
 
-                {/* Gift Node */}
-                <div className="absolute top-1/2 -translate-y-1/2 flex flex-col items-center" style={{ right: '0%' }}>
-                    <div className="absolute -top-8 whitespace-nowrap bg-[#222] text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
-                        Free Gift Worth ₹999
-                    </div>
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 border-black z-10 transition-colors ${hasFreeGift ? 'bg-black text-white' : 'bg-[#333]'}`}>
-                        {hasFreeGift && (
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                        )}
-                    </div>
-                    <div className="absolute -bottom-6 bg-black text-xs px-2 py-0.5 rounded-full border border-gray-600">
-                        ₹4,999
-                    </div>
+                {/* Progress Bar Container */}
+                <div className="relative w-full h-6 flex items-center">
+                    {/* Background track */}
+                    <div className="absolute left-0 w-full h-2 bg-gray-700 rounded-full z-0"></div>
+                    {/* Active progress */}
+                    <div
+                        className="absolute left-0 h-2 bg-purple-400 rounded-full transition-all duration-500 ease-out z-0 shadow-[0_0_10px_rgba(192,132,252,0.5)]"
+                        style={{ width: `${maxProgress}%` }}
+                    ></div>
+
+                     {/* Nodes */}
+                     <div className="absolute left-0 w-full flex justify-between items-center z-10">
+                          <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center border-2 border-black transition-colors ${hasFreeShipping ? 'bg-purple-500 text-white' : 'bg-[#333] text-gray-500'}`}>
+                                {hasFreeShipping && (
+                                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                )}
+                          </div>
+                          <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center border-2 border-black transition-colors ${hasFreeGift ? 'bg-purple-500 text-white' : 'bg-[#333] text-gray-500'}`}>
+                                {hasFreeGift && (
+                                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                )}
+                          </div>
+                     </div>
+                </div>
+
+                {/* Milestones Bottom */}
+                <div className="flex justify-between items-center w-full text-xs sm:text-sm font-medium">
+                    <span className="text-gray-300">₹999</span>
+                    <span className="text-gray-300">₹4,999</span>
                 </div>
             </div>
         </div>
@@ -199,49 +196,52 @@ export default function CartDrawer() {
                     ) : (
                         <div className="flex flex-col gap-4 sm:gap-6">
                             {cartItems.map(item => (
-                                <div key={item.id} className="flex gap-3 sm:gap-4 p-2 sm:p-3 bg-[#f3e8ff] rounded-lg relative group">
-                                    {/* Product Image with Badge */}
-                                    <div className="relative w-20 h-24 sm:w-28 sm:h-32 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                                        <img src={`${S3_BASE_URL}${item.image}`} alt={item.name} className="w-full h-full object-cover object-top" />
-                                        <div className="absolute -top-2 -right-2 bg-white border border-gray-200 text-black text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full shadow-sm z-10">
+                                <div key={item.id} className="flex gap-3 items-start justify-between p-2 sm:p-3 bg-white border border-purple-100 rounded-lg shadow-sm relative group w-full">
+                                    {/* 1. Image */}
+                                    <div className="relative w-20 h-24 object-cover flex-shrink-0 bg-gray-50 rounded-md overflow-hidden border border-gray-200 shadow-inner">
+                                        <img src={normalizeImageUrl(item.image)} alt={item.name} className="w-full h-full object-cover object-top" />
+                                        <div className="absolute -top-2 -right-2 bg-purple-600 border border-purple-800 text-white text-[10px] font-extrabold w-5 h-5 flex items-center justify-center rounded-full shadow-sm z-10">
                                             {item.quantity}
                                         </div>
                                     </div>
 
-                                    {/* Product Details */}
-                                    <div className="flex-1 flex flex-col py-1 min-w-0">
-                                        <div className="flex justify-between items-start pr-6">
-                                            <h3 className="text-sm sm:text-base font-medium text-black leading-tight pr-2 truncate max-w-[70%]">{item.name}</h3>
+                                    {/* 2. Content */}
+                                    <div className="flex flex-col flex-1 min-w-0 pr-2">
+                                        <h3 className="text-sm font-semibold text-gray-900 leading-tight mb-1 overflow-hidden text-ellipsis line-clamp-2">
+                                            {item.name}
+                                        </h3>
+                                        <div className="flex items-center gap-1.5 text-gray-600 mb-1">
+                                            <span className="text-[11px] font-semibold bg-gray-100 px-2 py-0.5 rounded text-gray-600 uppercase tracking-wider border border-gray-200">
+                                                {item.size}
+                                            </span>
+                                        </div>
+                                        <div className="text-sm text-gray-900 font-bold tracking-tight">
+                                            ₹{item.price.toLocaleString('en-IN')}
                                         </div>
 
-                                        <div className="flex flex-col mt-1 gap-1">
-                                            <div className="flex items-center gap-1 text-gray-500 text-sm">
-                                                <span className="w-6 h-6 flex items-center justify-center rounded-full border border-gray-300 bg-transparent text-xs">{item.size}</span>
-                                            </div>
-                                            {item.isOverStock && (
-                                                <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-600 rounded-md px-2 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs transition-all duration-200 ease-out animate-fade-in-down mb-2 break-words leading-tight">
-                                                    <ExclamationCircleIcon className="w-4 h-4 flex-shrink-0" />
-                                                    <span>Only {item.availableStock} items available in stock</span>
+                                        {item.isOverStock && (
+                                            <div className="mt-1 text-xs px-2 py-1.5 bg-red-50 border border-red-300 text-red-600 rounded-md w-full break-words">
+                                                <div className="flex items-start gap-1.5 align-top">
+                                                    <ExclamationCircleIcon className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                                    <span className="font-medium">Only {item.availableStock} in stock</span>
                                                 </div>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
+                                    </div>
 
-                                        <div className="mt-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mt-2 sm:mt-3">
-                                            <div className="text-sm sm:text-base text-black font-medium">₹{item.price.toLocaleString('en-IN')}</div>
-                                            <QuantityStepper
-                                                quantity={item.quantity}
-                                                onUpdate={(newQ) => syncQuantityWithBackend(item.id, item.variantId, item.size, newQ)}
-                                            />
-                                        </div>
-
-                                        {/* Remove Button - Top Right absolute relative to item */}
+                                    {/* 3. Stepper */}
+                                    <div className="flex-shrink-0 min-w-[90px] flex flex-col justify-between items-end h-24">
                                         <button
                                             onClick={() => removeFromCart(item.id)}
-                                            className="absolute top-2 right-2 p-2 sm:p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                                            className="p-1 -mt-1 -mr-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
                                             aria-label="Remove item"
                                         >
                                             <TrashIcon className="w-4 h-4" />
                                         </button>
+                                        <QuantityStepper
+                                            quantity={item.quantity}
+                                            onUpdate={(newQ) => syncQuantityWithBackend(item.id, item.variantId, item.size, newQ)}
+                                        />
                                     </div>
                                 </div>
                             ))}

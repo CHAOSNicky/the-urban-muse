@@ -5,6 +5,25 @@ import { fetchBackendCart } from '../services/cartSyncService';
 
 export const CartContext = createContext();
 
+const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
+
+export function normalizeImageUrl(url) {
+    if (!url) return "";
+
+    // Already full URL → normalize double slashes after domain
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+        return url.replace(/([^:]\/)\/+/g, "$1");
+    }
+
+    // Remove trailing slash from base URL
+    const cleanBase = S3_BASE_URL.replace(/\/+$/, '');
+
+    // Remove leading slash from path
+    const cleanPath = url.replace(/^\/+/, '');
+
+    return `${cleanBase}/${cleanPath}`;
+}
+
 export function CartProvider({ children }) {
     const { login } = useContext(LoginContext);
 
@@ -31,7 +50,7 @@ export function CartProvider({ children }) {
                 return parsedItems.map(item => {
                     const cleanedVariantId = item.variantId || item.varientId;
                     const { varientId, ...cleanItem } = item; // Stripping varientId
-                    return { ...cleanItem, variantId: cleanedVariantId };
+                    return { ...cleanItem, variantId: cleanedVariantId, image: normalizeImageUrl(cleanItem.image) };
                 });
             }
             return [];
@@ -133,6 +152,7 @@ export function CartProvider({ children }) {
             const normalized = newItems.map(item => ({
                 ...item,
                 id: item.id || generateUUID(),
+                image: normalizeImageUrl(item.image),
                 isOverStock: item.isOverStock ?? false,
                 availableStock: item.availableStock ?? undefined,
             }));
@@ -199,11 +219,11 @@ export function CartProvider({ children }) {
                     return prev.map(i =>
                         i.variantId === targetVariantId &&
                             i.size === item.size
-                            ? { ...i, quantity: item.quantity, isOverStock: false, availableStock: undefined }
+                            ? { ...i, quantity: item.quantity, image: normalizeImageUrl(item.image), isOverStock: false, availableStock: undefined }
                             : i
                     );
                 }
-                return [...prev, { ...item, isOverStock: false, availableStock: undefined, id: generateUUID() }];
+                return [...prev, { ...item, image: normalizeImageUrl(item.image), isOverStock: false, availableStock: undefined, id: generateUUID() }];
             });
 
             setIsCartOpen(true);
@@ -252,64 +272,83 @@ export function CartProvider({ children }) {
         if (newQuantity < 1) return;
         setCartError(null);
 
-        if (login) {
-            // ── Logged-in: backend-driven, NO optimistic update ──
-            // Use variantId+size as debounce key (stable across fetches, unlike id/UUID)
-            const debounceKey = `${variantId}_${size}`;
-            if (debounceTimers.current[debounceKey]) clearTimeout(debounceTimers.current[debounceKey]);
+        const targetVariantId = variantId;
+        const targetSize = size;
 
-            debounceTimers.current[debounceKey] = setTimeout(async () => {
-                try {
+        // Optimistic quantity update (unified identity matching)
+        setCartItems(prev => prev.map(item => {
+            const match = item.variantId === targetVariantId && item.size === targetSize;
+            return match ? { ...item, quantity: newQuantity } : item;
+        }));
+
+        // Stable debounce key
+        const debounceKey = `${targetVariantId}_${targetSize}`;
+        if (debounceTimers.current[debounceKey]) clearTimeout(debounceTimers.current[debounceKey]);
+
+        debounceTimers.current[debounceKey] = setTimeout(async () => {
+            try {
+                // ── Step 1: Always check stock first ──
+                const stockRes = await fetch(`${API_BASE_URL}/api/cart/check-stock`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        variantId: targetVariantId,
+                        size: targetSize.toUpperCase(),
+                        quantity: newQuantity
+                    }),
+                });
+
+                const stockData = await stockRes.json();
+                const isInvalid = newQuantity > stockData.availableStock;
+
+                // ── Step 2: Update stock validation state locally (SCOPED) ──
+                setCartItems(prev => prev.map(item => {
+                    const match = item.variantId === targetVariantId && item.size === targetSize;
+                    if (match) {
+                        return {
+                            ...item,
+                            isOverStock: isInvalid,
+                            availableStock: stockData.availableStock
+                        };
+                    }
+                    return item; // Keep other items strictly unchanged
+                }));
+
+                if (isInvalid) {
+                    setCartError("Some items in your cart exceed available stock.");
+                    return; // ✋ STOP — do NOT persist invalid quantity to backend
+                }
+
+                // ── Step 3: If valid AND logged-in → persist to backend ──
+                if (login) {
                     await fetch(`${API_BASE_URL}/api/cart/update`, {
                         method: "PUT",
                         credentials: "include",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ variantId, quantity: newQuantity }),
+                        body: JSON.stringify({ variantId: targetVariantId, quantity: newQuantity }),
                     });
 
+                    // Fetch backend cart to ensure true consistency, but apply it carefully
                     const result = await fetchBackendCart();
-                    if (result.success) {
-                        setCartItemsPreservingOrder(result.cart);
+                    if (result.success && result.cart) {
+                        // Find the updated remote item to get true quantity
+                        const remoteItem = result.cart.find(i =>
+                            i.variantId === targetVariantId && i.size === targetSize
+                        );
+
+                        // Only update this specific item's quantity with what backend says,
+                        // do NOT overwrite the whole cart (which drops other items' isOverStock states)
+                        setCartItems(prev => prev.map(item =>
+                            item.variantId === targetVariantId && item.size === targetSize
+                                ? { ...item, quantity: remoteItem ? remoteItem.quantity : newQuantity }
+                                : item
+                        ));
                     }
-                } catch (error) {
-                    console.error("Background cart sync failed", error);
                 }
-            }, 300);
-        } else {
-            // ── Guest: optimistic update + stock validation (unchanged) ──
-            setCartItems(prev => prev.map(item => item.id === id ? { ...item, quantity: newQuantity } : item));
-
-            if (debounceTimers.current[id]) clearTimeout(debounceTimers.current[id]);
-
-            debounceTimers.current[id] = setTimeout(async () => {
-                try {
-                    const response = await fetch(`${API_BASE_URL}/api/cart/check-stock`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            variantId,
-                            size: size.toUpperCase(),
-                            quantity: newQuantity
-                        }),
-                    });
-
-                    const data = await response.json();
-
-                    setCartItems(prev => prev.map(item => {
-                        if (item.id === id) {
-                            return {
-                                ...item,
-                                isOverStock: newQuantity > data.availableStock,
-                                availableStock: data.availableStock
-                            };
-                        }
-                        return item;
-                    }));
-                } catch (error) {
-                    console.error("Background cart sync failed", error);
-                }
-            }, 300);
-        }
+            } catch (error) {
+                console.error("Background cart sync failed", error);
+            }
+        }, 300);
     }, [login]);
 
     return (
