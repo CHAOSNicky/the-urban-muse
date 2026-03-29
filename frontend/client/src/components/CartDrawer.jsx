@@ -13,7 +13,7 @@ const QuantityStepper = ({ quantity, onUpdate }) => {
         onUpdate(newQuantity);
         setTimeout(() => {
             setIsUpdatingQuantity(false);
-        }, 300);
+        }, 1000);
     };
 
     return (
@@ -106,6 +106,7 @@ const RewardProgressBar = ({ currentTotal }) => {
 
 export default function CartDrawer() {
     const { isCartOpen, setIsCartOpen, cartItems, syncQuantityWithBackend, removeFromCart, cartError, setCartError, canCheckout } = useContext(CartContext);
+    const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
 
     useEffect(() => {
         if (isCartOpen) {
@@ -201,7 +202,7 @@ export default function CartDrawer() {
                                 <div key={item.id} className="flex gap-3 sm:gap-4 p-2 sm:p-3 bg-[#f3e8ff] rounded-lg relative group">
                                     {/* Product Image with Badge */}
                                     <div className="relative w-20 h-24 sm:w-28 sm:h-32 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                                        <img src={item.image} alt={item.name} className="w-full h-full object-cover object-top" />
+                                        <img src={`${S3_BASE_URL}${item.image}`} alt={item.name} className="w-full h-full object-cover object-top" />
                                         <div className="absolute -top-2 -right-2 bg-white border border-gray-200 text-black text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full shadow-sm z-10">
                                             {item.quantity}
                                         </div>

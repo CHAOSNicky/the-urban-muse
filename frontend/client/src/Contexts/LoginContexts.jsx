@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useCallback } from "react";
 import API_BASE_URL from "../Constants/CommonConst";
+import { clearCartSyncFlag } from "../services/cartSyncService";
 
 export const LoginContext = createContext();
 
@@ -67,6 +68,8 @@ export function LoginProvider({ children }) {
                 setLogin(false);
                 setName("");
                 setRole(null);
+                // Allow next login to trigger a fresh cart sync
+                clearCartSyncFlag();
             } else {
                 console.log("Logout failed");
             }

@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../Contexts/LoginContexts';
 import API_BASE_URL from "../Constants/CommonConst";
+import { syncCartToBackend, markCartSynced, isCartAlreadySynced, fetchBackendCart } from "../services/cartSyncService";
+import { CartContext } from '../Contexts/CartContext';
 
 
 export default function Signin() {
@@ -18,8 +20,8 @@ export default function Signin() {
   const normalizeEmail = (val) => val.trim();
   const isValidEmail = (val) => /\S+@\S+\.\S+/.test(val);
 
-  const { setName } = useContext(LoginContext);
-  const { setLogin } = useContext(LoginContext);
+  const { setName, setLogin } = useContext(LoginContext);
+  const { replaceCart } = useContext(CartContext);
 
   useEffect(() => {
     if (!cooldown) return;
@@ -70,6 +72,23 @@ export default function Signin() {
       setName(data.fullname);
       setLogin(true);
       await verifyAuth();
+
+      // ── Sync localStorage cart to backend (once per login session) ──
+      if (!isCartAlreadySynced()) {
+        const result = await syncCartToBackend();
+        if (result.success) {
+          markCartSynced();
+        } else {
+          console.warn("[CartSync] Sync failed, will retry on next login:", result.error);
+        }
+      }
+
+      // ── Fetch backend cart → replace frontend state ──
+      const backendCart = await fetchBackendCart();
+      if (backendCart.success) {
+        replaceCart(backendCart.cart);
+      }
+
       setTimeout(() => {
         navigate("/");
       }, 1500);
