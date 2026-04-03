@@ -34,7 +34,7 @@ public class CartService {
     @Transactional
     public void addCart(AddCart addCart, Authentication authentication) {
         String email = authentication.getName();
-        Account acc = accountRepo.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
+        Account acc = accountRepo.findByEmail(email).orElseThrow(()-> new ResourceNotFoundException("User not found"));
 
         Cart cart = cartRepo
                 .findByAccountAndCartStatus(acc, CartStatus.ACTIVE)
@@ -49,7 +49,7 @@ public class CartService {
             System.out.println(prodIdAndQuantity.getKey());
             ProductVarient productVarient = productVarientRepo
                     .findByVarientId(prodIdAndQuantity.getKey())
-                    .orElseThrow(()-> new RuntimeException("Product not found"));
+                    .orElseThrow(()-> new ResourceNotFoundException("Product not found"));
             CartItem cartItem = cartItemRepo
                     .findByCartAndProductVarient(cart, productVarient)
                     .map(existingCartItem -> {
@@ -86,7 +86,7 @@ public class CartService {
         String email = authentication.getName();
         Account acc = accountRepo
                 .findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Cart cart = cartRepo
                 .findByAccountAndCartStatus(acc, CartStatus.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart Not Found"));
@@ -113,7 +113,7 @@ public class CartService {
     public List<CartItemResponseDto> getCart(Authentication authentication) {
         String email = authentication.getName();
         Account acc = accountRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Cart cart = cartRepo.findByAccountAndCartStatus(acc, CartStatus.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart Not Found"));
         List<CartItem> cartItems = cart.getCartItems();
@@ -140,5 +140,19 @@ public class CartService {
         String firstImg = null;
         firstImg = imageObjectKeys.split(",")[0];
         return firstImg;
+    }
+
+    @Transactional
+    public void removeCart(Authentication authentication, Long productVarientId){
+        Account acc = accountRepo
+                .findByEmail(authentication.getName()).orElseThrow(() ->  new ResourceNotFoundException("User not found"));
+        Cart cart = cartRepo
+                .findByAccountAndCartStatus(acc, CartStatus.ACTIVE).orElseThrow(() -> new ResourceNotFoundException("Cart Not Found"));
+        CartItem cartItem = cart.getCartItems()
+                        .stream()
+                                .filter(item -> item.getProductVarient().getVarientId().equals(productVarientId))
+                                .findFirst()
+                                .orElseThrow(() -> new ResourceNotFoundException("CartItem Not Found"));
+        cart.getCartItems().remove(cartItem);
     }
 }

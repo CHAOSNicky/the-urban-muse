@@ -244,11 +244,10 @@ export function CartProvider({ children }) {
 
             if (item?.variantId) {
                 try {
-                    await fetch(`${API_BASE_URL}/api/cart/remove`, {
+                    await fetch(`${API_BASE_URL}/api/cart/remove/${item.variantId}`, {
                         method: "DELETE",
                         credentials: "include",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ variantId: item.variantId }),
                     });
                 } catch (err) {
                     console.error("[Cart] Failed to remove from backend cart:", err);

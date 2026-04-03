@@ -2,6 +2,7 @@ package com.practice.loginwebapp.controllers;
 
 import com.practice.loginwebapp.dtos.*;
 import com.practice.loginwebapp.services.CartService;
+import org.springframework.data.web.ReactiveOffsetScrollPositionHandlerMethodArgumentResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -31,6 +32,12 @@ public class CartController {
     public ResponseEntity<SuccessResposne> updateCart(Authentication authentication, @RequestBody UpdateCartItemQuantity updateCartItemQuantity) {
         cartService.updateCart(authentication, updateCartItemQuantity);
         return ResponseEntity.status(HttpStatus.OK).body(new SuccessResposne("Product Quantity Synced successfully"));
+    }
+
+    @DeleteMapping("/remove/{productVarientId}")
+    public ResponseEntity<SuccessResposne> removeCart(Authentication authentication, @PathVariable Long productVarientId){
+        cartService.removeCart(authentication, productVarientId);
+        return ResponseEntity.status(HttpStatus.OK).body(new SuccessResposne("Cart Item Removed Successfully"));
     }
 
     @GetMapping("/get-cart")
