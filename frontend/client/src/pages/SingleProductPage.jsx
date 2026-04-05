@@ -171,6 +171,28 @@ export default function SingleProductPage() {
         }
     };
 
+    const handleBuyNow = () => {
+        if (!selectedVariant) return;
+        
+        const payload = {
+            varientId: selectedVariant.variantId, // Guaranteed strict backend spelling
+            name: product.name,
+            size: selectedSize,
+            price: selectedVariant.price,
+            quantity: quantity,
+            image: imageKeys.length > 0 ? imageUrl(imageKeys[0]) : '/fallback.png',
+            availableQuantity: selectedVariant.quantity // Updated to match expected field name strictly
+        };
+        
+        console.log("Navigating to checkout (Buy Now)", payload);
+        
+        // Pass via state per architecture decision
+        navigate('/checkout', {
+            state: { productVariant: payload }
+        });
+    };
+
+
     // ── Loading ──────────────────────────────────────────────
     if (loading) {
         return (
@@ -416,6 +438,7 @@ export default function SingleProductPage() {
                             {/* Buy Now */}
                             <button
                                 disabled={!selectedVariant}
+                                onClick={handleBuyNow}
                                 className="w-full py-3.5 text-sm tracking-widest uppercase font-medium transition-all duration-300 border border-black text-black bg-transparent hover:bg-black/5 disabled:border-black/20 disabled:text-black/20 disabled:cursor-not-allowed"
                             >
                                 Buy Now

@@ -25,5 +25,8 @@ public class Account {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Embedded
+    private Address address = new Address();
 }
 

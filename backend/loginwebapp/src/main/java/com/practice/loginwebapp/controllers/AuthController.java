@@ -1,9 +1,7 @@
 package com.practice.loginwebapp.controllers;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-
+import com.practice.loginwebapp.dtos.AddressDto;
 import com.practice.loginwebapp.dtos.Signin;
 import com.practice.loginwebapp.dtos.Signup;
 import com.practice.loginwebapp.dtos.SuccessResposne;
@@ -16,17 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.practice.loginwebapp.repositories.AccountRepo;
-import com.practice.loginwebapp.services.AuthService;
+import org.springframework.web.bind.annotation.*;
+import com.practice.loginwebapp.services.AccountService;
 import com.practice.loginwebapp.util.JwtUtil;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/auth")
@@ -34,21 +24,21 @@ public class AuthController {
 
     private final AccountRepo accountrepo;
     private final JwtUtil jwtUtil;
-    private final AuthService authservice;
+    private final AccountService accountservice;
     private final StringRedisTemplate redistemplate;
 
 
-    public AuthController(AccountRepo accountrepo, JwtUtil jwtUtil, AuthService authservice, StringRedisTemplate redistemplate) {
+    public AuthController(AccountRepo accountrepo, JwtUtil jwtUtil, AccountService accountservice, StringRedisTemplate redistemplate) {
         this.accountrepo = accountrepo;
         this.jwtUtil = jwtUtil;
-        this.authservice = authservice;
+        this.accountservice = accountservice;
         this.redistemplate = redistemplate;
     }
 
 
     @PostMapping("/signup")
     public ResponseEntity<SuccessResposne> storeLoginCred(@RequestBody Signup signup){
-              authservice.createAccount(signup);
+              accountservice.createAccount(signup);
               return ResponseEntity.status(HttpStatus.CREATED).body(new SuccessResposne("Account Created"));
     } 
 
@@ -56,7 +46,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Signin signin) {
 
-        String token = authservice.verifyAccount(signin);
+        String token = accountservice.verifyAccount(signin);
         ResponseCookie cookie =
                 ResponseCookie.from("jwt", token)
                         .httpOnly(true)
@@ -97,6 +87,20 @@ public class AuthController {
                         )
                 );
     }
+
+
+    @PutMapping("/account/address")
+    public ResponseEntity<?> postAddress(@RequestBody AddressDto address, Authentication authentication){
+        accountservice.addAddress(authentication, address);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Successfully post address");
+    }
+
+
+    @GetMapping("/account/address")
+    public ResponseEntity<AddressDto> getAddress(Authentication authentication){
+        return ResponseEntity.status(HttpStatus.CREATED).body(accountservice.getAddress(authentication));
+    }
+
 
     @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication){

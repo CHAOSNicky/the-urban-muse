@@ -92,7 +92,7 @@ export default function HeaderNav({ overlay = true }) {
                             <button
                                 onClick={() => {
                                     if (!login) {
-                                        navigate('/login');
+                                        navigate('/profile');
                                     } else {
                                         setOpen(prev => !prev);
                                     }
@@ -112,6 +112,12 @@ export default function HeaderNav({ overlay = true }) {
                 ">
                                     {login ? (
                                         <div className="text-sm sm:text-base px-4 py-2 ">
+                                            <Link to="/profile" onClick={() => setOpen(false)} className="block text-white/70 text-sm sm:text-base px-4 py-2 mb-1
+                          hover:backdrop-blur-md
+                          border border-transparent
+                          rounded-lg">
+                                                PROFILE
+                                            </Link>
                                             {role === "ADMIN" && (
                                                 <Link to="/admin" onClick={() => setOpen(false)} className="block text-white/70 text-sm sm:text-base px-4 py-2 mb-1
                           hover:backdrop-blur-md
@@ -128,7 +134,7 @@ export default function HeaderNav({ overlay = true }) {
                                             </button>
                                         </div>
                                     ) : (
-                                        <Link to="/login" onClick={() => setOpen(false)} className="block text-white/70 text-sm sm:text-base px-4 py-2
+                                        <Link to="/profile" onClick={() => setOpen(false)} className="block text-white/70 text-sm sm:text-base px-4 py-2
                       hover:backdrop-blur-md
                       border border-transparent
                       rounded-lg">
@@ -164,10 +170,13 @@ export default function HeaderNav({ overlay = true }) {
                     <Link to="/new" className="py-2">NEW ARRIVALS</Link>
                     <Link to="/contact" className="py-2">CONTACT</Link>
                     <Link to="/about" className="py-2">ABOUT</Link>
-                    {login ? (<div className="py-2 flex items-center gap-2">
-                        <button onClick={logout} className="w-5 h-5" > LOGOUT </button>
-                    </div>)
-                        : <Link to="/login" className="py-2 flex items-center gap-2">
+                    {login ? (<>
+                        <Link to="/profile" className="py-2">PROFILE</Link>
+                        <div className="py-2 flex items-center gap-2">
+                            <button onClick={logout} > LOGOUT </button>
+                        </div>
+                    </>)
+                        : <Link to="/profile" className="py-2 flex items-center gap-2">
                             <button className="" > LOGIN / SIGNUP </button>
                         </Link>}
                     {role === "ADMIN" && <Link to="/admin" className="py-2">ADMIN</Link>}

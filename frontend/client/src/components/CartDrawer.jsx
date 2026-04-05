@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { XMarkIcon, TrashIcon, MinusIcon, PlusIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { CartContext, normalizeImageUrl } from '../Contexts/CartContext';
 
@@ -102,6 +103,7 @@ const RewardProgressBar = ({ currentTotal }) => {
 // --- Main Cart Drawer Component ---
 
 export default function CartDrawer() {
+    const navigate = useNavigate();
     const { isCartOpen, setIsCartOpen, cartItems, syncQuantityWithBackend, removeFromCart, cartError, setCartError, canCheckout } = useContext(CartContext);
     const S3_BASE_URL = import.meta.env.VITE_S3_BASE_URL;
 
@@ -265,6 +267,11 @@ export default function CartDrawer() {
                                     </p>
                                 )}
                                 <button
+                                    onClick={() => {
+                                        console.log("Navigating to checkout", cartItems);
+                                        setIsCartOpen(false);
+                                        navigate('/checkout');
+                                    }}
                                     disabled={!canCheckout}
                                     aria-label="Proceed to checkout"
                                     className="w-full bg-[#a855f7] hover:bg-[#9333ea] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-3.5 sm:py-3 px-2 sm:px-6 rounded-md flex items-center justify-center gap-1 sm:gap-2 transition-colors tracking-widest text-xs sm:text-sm shadow-sm"
