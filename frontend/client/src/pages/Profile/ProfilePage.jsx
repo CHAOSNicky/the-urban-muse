@@ -1,10 +1,12 @@
 import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { LoginContext } from "../../Contexts/LoginContexts";
 import ProfileContainer from "./ProfileContainer";
 import Login from "../../components/Login";
 
 export default function ProfilePage() {
     const { login, loading } = useContext(LoginContext);
+    const navigate = useNavigate();
 
     // ── Loading skeleton ────────────────────────────────────────────
     if (loading) {
@@ -29,6 +31,20 @@ export default function ProfilePage() {
         return (
             <div className="min-h-screen bg-[#f8f9fa]">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+                    
+                    {/* Back Button */}
+                    <div className="mb-6 animate-slide-up">
+                        <button 
+                            onClick={() => navigate(-1)}
+                            className="w-10 h-10 bg-white rounded-full shadow-ambient flex items-center justify-center text-[#191c1d] hover:bg-gray-50 transition-colors"
+                            aria-label="Go back"
+                        >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                        </button>
+                    </div>
+
                     {/* ── Main 2-Column Bento Grid ─────────────────── */}
                     <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
 
@@ -135,14 +151,25 @@ export default function ProfilePage() {
     return (
         <div className="min-h-screen bg-[#f8f9fa]">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-                {/* Page header */}
-                <div className="mb-8 animate-slide-up">
-                    <h1 className="font-manrope text-3xl sm:text-4xl font-bold text-[#191c1d] tracking-tight">
-                        Member Hub
-                    </h1>
-                    <p className="font-inter text-[#5b5a64] mt-1">
-                        Welcome back, your curated digital workspace is ready.
-                    </p>
+                {/* Page header with Back Button */}
+                <div className="mb-8 animate-slide-up flex items-center gap-4">
+                    <button 
+                        onClick={() => navigate(-1)}
+                        className="w-10 h-10 bg-white rounded-full shadow-ambient flex items-center justify-center text-[#191c1d] hover:bg-gray-50 transition-colors"
+                        aria-label="Go back"
+                    >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                    </button>
+                    <div>
+                        <h1 className="font-manrope text-3xl sm:text-4xl font-bold text-[#191c1d] tracking-tight">
+                            Member Hub
+                        </h1>
+                        <p className="font-inter text-[#5b5a64] mt-1">
+                            Welcome back, your curated digital workspace is ready.
+                        </p>
+                    </div>
                 </div>
 
                 <ProfileContainer />

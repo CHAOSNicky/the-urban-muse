@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 /**
  * AddressBlock — Visual clone of Profile AddressManager (Bento)
@@ -16,6 +16,19 @@ export default function AddressBlock({ address, onAddressChange }) {
         state: address?.state || '',
         zip: address?.zip || '',
     });
+
+    useEffect(() => {
+        if (address) {
+            setForm({
+                fullName: address.fullName || '',
+                street: address.street || '',
+                city: address.city || '',
+                state: address.state || '',
+                zip: address.zip || '',
+            });
+            setEditing(false);
+        }
+    }, [address]);
 
     const handleChange = (field) => (e) => {
         setForm(prev => ({ ...prev, [field]: e.target.value }));

@@ -1,7 +1,8 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useState, useMemo, useContext, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CartContext } from '../../Contexts/CartContext';
 import { LoginContext } from '../../Contexts/LoginContexts';
+import { fetchAddress } from '../../services/profileService';
 
 // Import UI Blocks
 import LoginBlock from './LoginBlock';
@@ -22,7 +23,29 @@ export default function CheckoutContainer() {
 
     // Local State
     const [address, setAddress] = useState(null);
+    const [addressLoading, setAddressLoading] = useState(false);
     const [selectedPayment, setSelectedPayment] = useState('card');
+
+    // ── Auto-fetch address when user is logged in ──
+    const loadAddress = useCallback(async () => {
+        setAddressLoading(true);
+        try {
+            const result = await fetchAddress();
+            if (result.success && result.data) {
+                setAddress(result.data);
+            }
+        } catch (err) {
+            console.error('[Checkout] Address fetch failed:', err);
+        } finally {
+            setAddressLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (login) {
+            loadAddress();
+        }
+    }, [login, loadAddress]);
 
     // 1. FLOW DETECTION & 2. DATA SOURCE SEPARATION
     const pv = location.state?.productVariant;
@@ -104,7 +127,6 @@ export default function CheckoutContainer() {
     const isConfirmDisabled = hasOutOfStock || isGuestBlocked || isAddressMissing || isCartEmpty;
 
     // Handlers
-    const handleLoginClick = () => navigate('/login');
     const handleConfirmOrder = () => {
         if (isConfirmDisabled) return;
         console.log("Order Confirmed!", { unifiedItems, address, selectedPayment });
@@ -155,23 +177,29 @@ export default function CheckoutContainer() {
         <div className="min-h-screen bg-[#f3f4f5] font-inter pb-40 pt-10 px-4 lg:px-8">
             <div className="max-w-7xl mx-auto">
 
-                {/* Page Header */}
-                <h1 className="font-manrope text-3xl sm:text-4xl font-bold text-[#191c1d] tracking-tight mb-8">
-                    Checkout
-                </h1>
+                {/* Back Button & Page Header */}
+                <div className="flex items-center gap-4 mb-8">
+                    <button 
+                        onClick={() => navigate(-1)}
+                        className="w-10 h-10 bg-white rounded-full shadow-ambient flex items-center justify-center text-[#191c1d] hover:bg-gray-50 transition-colors"
+                        aria-label="Go back"
+                    >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                    </button>
+                    <h1 className="font-manrope text-3xl sm:text-4xl font-bold text-[#191c1d] tracking-tight">
+                        Checkout
+                    </h1>
+                </div>
 
                 {/* ─── The Bento Grid ─── */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
 
                     {/* ─── LEFT: Main Column (8 cols) ─── */}
                     <div className="lg:col-span-8 flex flex-col gap-6">
-                        {/* Guest Login Block */}
-                        {!login && (
-                            <LoginBlock
-                                isLoggedIn={login}
-                                onLogin={handleLoginClick}
-                            />
-                        )}
+                        {/* Inline Auth / Logged-in Confirmation */}
+                        <LoginBlock isLoggedIn={login} />
 
                         {/* Address Block */}
                         <AddressBlock
