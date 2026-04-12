@@ -13,6 +13,11 @@ import { LoginProvider } from './Contexts/LoginContexts'
 import { CartProvider } from './Contexts/CartContext'
 import CartDrawer from './components/CartDrawer'
 import CheckoutContainer from './pages/Checkout/CheckoutContainer'
+import AdminDashboard from './pages/Admin/AdminDashboard'
+import ProductHub from './pages/Admin/ProductHub'
+import CategoryHub from './pages/Admin/CategoryHub'
+import OrderManagement from './pages/Admin/OrderManagement'
+import AdminSettings from './pages/Admin/AdminSettings'
 
 export default function App() {
 
@@ -25,6 +30,11 @@ export default function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/admin" element={<Admin />} />
+                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                    <Route path="/admin/products" element={<ProductHub />} />
+                    <Route path="/admin/categories" element={<CategoryHub />} />
+                    <Route path="/admin/orders" element={<OrderManagement />} />
+                    <Route path="/admin/settings" element={<AdminSettings />} />
                     <Route path="/product" element={<MainImage />} />
                     <Route path="/checkout" element={<CheckoutContainer />} />
                     <Route element={<ShopLayout />}>

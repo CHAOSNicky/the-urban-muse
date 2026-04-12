@@ -322,7 +322,7 @@ export default function Admin() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-600 to-gray-400">
             <div className="absolute top-5 left-7 z-50 cursor-pointer text-gray-600 hover:text-black transition-colors">
-                <Link to="/" aria-label="Go To MainPage" className="inline-flex items-center justify-center rounded-full bg-white/80 backdrop-blur px-2 py-2 shadow ring-1 ring-gray-200 hover:shadow-md">
+                <button onClick={() => navigate(-1)} aria-label="Go Back" className="inline-flex items-center justify-center rounded-full bg-white/80 backdrop-blur px-2 py-2 shadow ring-1 ring-gray-200 hover:shadow-md">
                     <svg
                         width="28"
                         height="28"
@@ -335,7 +335,7 @@ export default function Admin() {
                     >
                         <polyline points="15 18 9 12 15 6" />
                     </svg>
-                </Link>
+                </button>
             </div>
 
             <div className="py-4 md:py-6 text-center bg-white/70 backdrop-blur border-b border-gray-500 shadow-sm">

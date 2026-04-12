@@ -142,14 +142,14 @@ export default function CartDrawer() {
             {/* Backdrop Overlay */}
             {isCartOpen && (
                 <div
-                    className="fixed inset-0 bg-black/40 z-40 transition-opacity"
+                    className="fixed inset-0 bg-black/40 z-[998] transition-opacity"
                     onClick={() => setIsCartOpen(false)}
                 />
             )}
 
             {/* Slide-out Drawer */}
             <div
-                className={`fixed top-0 right-0 h-full w-full sm:w-[450px] lg:w-[30vw] sm:min-w-[320px] sm:max-w-[500px] bg-[#f3e8ff] z-50 transform transition-transform duration-400 ease-[cubic-bezier(0.46,0.01,0.32,1)] flex flex-col shadow-[-14px_8px_14.4px_0_rgba(0,0,0,0.35)] ${isCartOpen ? 'translate-x-0' : 'translate-x-full'
+                className={`fixed top-0 right-0 h-full w-full sm:w-[450px] lg:w-[30vw] sm:min-w-[320px] sm:max-w-[500px] bg-[#f3e8ff] z-[999] transform transition-transform duration-400 ease-[cubic-bezier(0.46,0.01,0.32,1)] flex flex-col shadow-[-14px_8px_14.4px_0_rgba(0,0,0,0.35)] ${isCartOpen ? 'translate-x-0' : 'translate-x-full'
                     }`}
             >
                 {/* 1. Header Area */}

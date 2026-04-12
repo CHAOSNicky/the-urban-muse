@@ -1,34 +1,43 @@
 import React from 'react';
-import promoImage from '../assets/photo-1567401893414-76b7b1e5a7a5.jpeg';
 import HeaderNav from '../components/HeaderNav';
+import ScrollSequenceHero from '../components/ScrollSequenceHero';
+import TopScrollingBanner from '../components/TopScrollingBanner';
 
-function MainImage() {
-  return (
-    <div className="relative">
-      {/* Header (overlayed on image) */}
-      <HeaderNav />
-
-      {/* Hero image (responsive height + crop) */}
-      <div className="
-        relative overflow-hidden
-        h-[70vh] min-h-[360px]
-        sm:h-[64vh]
-        md:h-[70vh]
-        lg:h-[650px]
-      ">
-        <img
-          src={promoImage}
-          alt="Promotional Banner"
-          className="
-            w-full h-full object-cover
-            object-center
-            lg:object-[0%_50%]
-            transition-transform duration-[1000ms] ease-out animate-zoomOut
-          "
-        />
+function MainImage({ section, parentRef }) {
+  // If no section specified, render full stack (legacy support)
+  if (!section) {
+    return (
+      <div className="relative w-full">
+        <div className="relative w-full z-[100]">
+          <TopScrollingBanner />
+          <HeaderNav />
+        </div>
+        <div className="relative z-10 w-full">
+          <ScrollSequenceHero />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  // Unitary Slide segments
+  if (section === 'header') {
+    return (
+      <div className="relative w-full z-[100]">
+        <TopScrollingBanner />
+        <HeaderNav />
+      </div>
+    );
+  }
+
+  if (section === 'hero') {
+    return (
+      <div className="relative z-10 w-full h-full">
+        <ScrollSequenceHero externalRef={parentRef} />
+      </div>
+    );
+  }
+
+  return null;
 }
 
 export default MainImage;

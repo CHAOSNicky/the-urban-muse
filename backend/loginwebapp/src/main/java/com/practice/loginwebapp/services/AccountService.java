@@ -70,6 +70,7 @@ public class AccountService {
         if (acc.getAddress() == null) {
             acc.setAddress(new Address());
         }
+        acc.setFullName(address.getFullName());
         acc.getAddress().setStreet(address.getStreet());
         acc.getAddress().setCity(address.getCity());
         acc.getAddress().setState(address.getState());
@@ -84,9 +85,10 @@ public class AccountService {
                 .findByEmail(authentication.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("Account does not exist"));
         if (acc.getAddress() == null) {
-            return new AddressDto("", "", "", "");
+            return new AddressDto("", "", "", "", "");
         }
         AddressDto addressDto = new AddressDto();
+        addressDto.setFullName(acc.getFullName());
         addressDto.setStreet(acc.getAddress().getStreet());
         addressDto.setCity(acc.getAddress().getCity());
         addressDto.setState(acc.getAddress().getState());

@@ -72,7 +72,7 @@ export default function TrendingCategory({ variant = "default" }) {
   }
 
   return (
-    <section className={`bg-[#edeaf5] ${isCompact ? "py-6 md:py-6" : "py-8 md:py-12"}`}>
+    <section className={`relative z-20 bg-[#edeaf5] ${isCompact ? "py-6 md:py-6" : "py-8 md:py-12"}`}>
       <h2 className={`text-center text-black font-medium mb-6 md:mb-8 ${isCompact ? "text-xl md:text-2xl" : "text-2xl md:text-4xl"
         }`}>
         TRENDING CATEGORIES 👇

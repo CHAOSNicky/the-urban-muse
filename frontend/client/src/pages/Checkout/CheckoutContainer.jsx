@@ -2,7 +2,7 @@ import React, { useState, useMemo, useContext, useEffect, useCallback } from 're
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CartContext } from '../../Contexts/CartContext';
 import { LoginContext } from '../../Contexts/LoginContexts';
-import { fetchAddress } from '../../services/profileService';
+import { fetchAddress, updateAddress } from '../../services/profileService';
 
 // Import UI Blocks
 import LoginBlock from './LoginBlock';
@@ -24,6 +24,7 @@ export default function CheckoutContainer() {
     // Local State
     const [address, setAddress] = useState(null);
     const [addressLoading, setAddressLoading] = useState(false);
+    const [isSavingAddress, setIsSavingAddress] = useState(false);
     const [selectedPayment, setSelectedPayment] = useState('card');
 
     // ── Auto-fetch address when user is logged in ──
@@ -126,6 +127,24 @@ export default function CheckoutContainer() {
     const isCartEmpty = unifiedItems.length === 0;
     const isConfirmDisabled = hasOutOfStock || isGuestBlocked || isAddressMissing || isCartEmpty;
 
+    // ── Save address to backend ──
+    const handleAddressSave = useCallback(async (newAddress) => {
+        setIsSavingAddress(true);
+        try {
+            const result = await updateAddress(newAddress);
+            if (result.success) {
+                // Use the data the server echoes back; fall back to what we sent
+                setAddress(result.data ?? newAddress);
+            } else {
+                console.error('[Checkout] Address update failed:', result.error);
+            }
+        } catch (err) {
+            console.error('[Checkout] Address update error:', err);
+        } finally {
+            setIsSavingAddress(false);
+        }
+    }, []);
+
     // Handlers
     const handleConfirmOrder = () => {
         if (isConfirmDisabled) return;
@@ -204,7 +223,9 @@ export default function CheckoutContainer() {
                         {/* Address Block */}
                         <AddressBlock
                             address={address}
-                            onAddressChange={(newAddress) => setAddress(newAddress)}
+                            onAddressChange={handleAddressSave}
+                            isSaving={isSavingAddress}
+                            isLoggedIn={login}
                         />
 
                         {/* Payment Block */}

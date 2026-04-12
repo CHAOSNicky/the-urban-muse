@@ -15,11 +15,11 @@ export default function HeaderNav({ overlay = true }) {
     useEffect(() => setMobileOpen(false), [location.pathname]);
 
     return (
-        <div className={overlay ? 'absolute inset-x-0 top-0 z-20' : 'relative z-20'}>
-            <div className={`h-14 sm:h-[60px] px-4 sm:px-6 ${overlay ? 'bg-[#edeaf5]/90 backdrop-blur supports-[backdrop-filter]:bg-[#edeaf5]/40' : 'bg-[#edeaf5]'}`}>
+        <div className="w-full relative z-50 bg-transparent">
+            <div className="h-14 sm:h-[60px] px-4 sm:px-6 bg-white/40 backdrop-blur-md">
                 <div className="h-full flex items-center">
                     {/* Left: Brand + Mobile hamburger */}
-                    <div className="flex items-center gap-3 text-black">
+                    <div className="flex items-center gap-3 text-black/80">
                         <button
                             className="lg:hidden p-2 -ml-2 rounded-xl focus:outline-none focus:ring"
                             aria-label="Toggle menu"
@@ -40,7 +40,7 @@ export default function HeaderNav({ overlay = true }) {
                     </div>
 
                     {/* Center: Desktop links */}
-                    <nav className="hidden lg:flex flex-1 items-center justify-center gap-10 text-base text-black">
+                    <nav className="hidden lg:flex flex-1 items-center justify-center gap-10 text-base text-black/80">
                         <Link to="/new" className="">NEW ARRIVALS</Link>
                         <Link to="/contact" className="">CONTACT</Link>
                         <Link to="/about" className="">ABOUT</Link>
@@ -50,16 +50,16 @@ export default function HeaderNav({ overlay = true }) {
                     <div className="ml-auto flex items-center gap-4 sm:gap-6">
                         <button
                             onClick={() => navigate('/profile')}
-                            className="p-1 rounded-md text-black"
+                            className="p-1 text-black/80"
                             aria-label="Profile"
                         >
                             <UserIcon className="h-6 w-6 hidden lg:block" />
                         </button>
 
-                        <button className="p-1 text-black" aria-label="Search">
+                        <button className="p-1 text-black/80" aria-label="Search">
                             <MagnifyingGlassIcon className="h-6 w-6 sm:h-7 sm:w-7" />
                         </button>
-                        <button onClick={() => setIsCartOpen(true)} className="p-1 text-black relative" aria-label="Cart">
+                        <button onClick={() => setIsCartOpen(true)} className="p-1 text-black/80 relative" aria-label="Cart">
                             <ShoppingCartIcon className="h-6 w-6 sm:h-7 sm:w-7" />
                             {cartItems.length > 0 && (
                                 <span className="absolute -top-1 -right-1 bg-gray-100 text-black text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-gray-300">

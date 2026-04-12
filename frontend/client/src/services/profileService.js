@@ -71,7 +71,7 @@ export async function fetchAddress() {
 
 /**
  * Updates the user's shipping address.
- * @param {{ street: string, city: string, state: string, zip: string }} addressData
+ * @param {{ fullName: string, street: string, city: string, state: string, zip: string }} addressData
  * @returns {{ success: boolean, data?: object, error?: string }}
  */
 export async function updateAddress(addressData) {
@@ -84,6 +84,7 @@ export async function updateAddress(addressData) {
                 Accept: "application/json",
             },
             body: JSON.stringify({
+                fullName: addressData.fullName,
                 street: addressData.street,
                 city: addressData.city,
                 state: addressData.state,

@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
  * - address (object | null)
  * - onAddressChange (function)
  */
-export default function AddressBlock({ address, onAddressChange }) {
+export default function AddressBlock({ address, onAddressChange, isSaving = false, isLoggedIn = false }) {
     const [editing, setEditing] = useState(!address);
     const [form, setForm] = useState({
         fullName: address?.fullName || '',
@@ -53,7 +53,19 @@ export default function AddressBlock({ address, onAddressChange }) {
             </div>
 
             {/* Content */}
-            {editing ? (
+            {!isLoggedIn ? (
+                /* ── Locked state: guest users cannot enter an address ── */
+                <div className="bg-[#f3f4f5] rounded-2xl p-5 flex flex-col items-center text-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm flex-shrink-0">
+                        <svg className="w-5 h-5 text-[#5b5a64]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <p className="font-inter text-sm text-[#5b5a64] leading-relaxed">
+                        Please log in or sign up to enter your shipping address.
+                    </p>
+                </div>
+            ) : editing ? (
                 <div className="flex flex-col gap-4">
                     <div>
                         <label className="font-inter text-xs font-medium text-[#5b5a64] uppercase tracking-wider mb-1.5 block">
@@ -122,9 +134,11 @@ export default function AddressBlock({ address, onAddressChange }) {
                     <div className="flex gap-3 mt-2">
                         <button
                             onClick={handleSave}
-                            className="btn-primary-gradient flex-1 text-sm"
+                            disabled={isSaving}
+                            aria-busy={isSaving}
+                            className="btn-primary-gradient flex-1 text-sm disabled:opacity-60 disabled:cursor-not-allowed"
                         >
-                            Confirm Address
+                            {isSaving ? 'Saving…' : 'Confirm Address'}
                         </button>
                         {address && (
                             <button
